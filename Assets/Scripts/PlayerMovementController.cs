@@ -11,31 +11,31 @@ public class PlayerMovementController : NetworkBehaviour
     public Rigidbody2D rb;
     Vector2 movement;
 
-    void Start() {
-        PlayerModel.SetActive(false);
-    }
+//     void Start() {
+//         PlayerModel.SetActive(false);
+//     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        movement.y=Input.GetAxisRaw("Vertical");
-        movement.x=Input.GetAxisRaw("Horizontal");
-    }
+//     // Update is called once per frame
+//     void Update()
+//     {
+//         movement.y=Input.GetAxisRaw("Vertical");
+//         movement.x=Input.GetAxisRaw("Horizontal");
+//     }
 
-    void FixedUpdate() {
-        rb.MovePosition(rb.position+movement*moveSpeed*Time.fixedDeltaTime);        
-    }
+//     void FixedUpdate() {
+//         rb.MovePosition(rb.position+movement*moveSpeed*Time.fixedDeltaTime);        
+//     }
 
-    void OnCollisionEnter(Collision col) {
-        Debug.Log("OW!");
-    }
+//     void OnCollisionEnter(Collision col) {
+//         Debug.Log("OW!");
+//     }
 
-    // public void Movement() {
-    //     float xDirection=Input.GetAxis("Horizontal"); 
-    //     float yDirection= Input.GetAxis("Vertical");
+//     public void Movement() {
+//         float xDirection=Input.GetAxis("Horizontal"); 
+//         float yDirection= Input.GetAxis("Vertical");
 
-    //     Vector2 moveDirection =new Vector2(xDirection, yDirection);
+//         Vector2 moveDirection =new Vector2(xDirection, yDirection);
 
-    //     transform.position = (moveDirection * moveSpeed) + transform.position;
-    // }
+//         transform.position = (moveDirection * moveSpeed) + transform.position;
+//     }
 }
