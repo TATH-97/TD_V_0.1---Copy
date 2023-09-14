@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.AI;
+using Mirror;
 
-public class BasicMinionMovement : MonoBehaviour
+public class BasicMinionMovement : NetworkBehaviour
 {
 
-    [SerializeField] Transform target;
+    Transform target;
+
+    public void setTarget(Transform t) {
+        Debug.Log("Target set");
+        target=t;
+    }
+
     NavMeshAgent agent;
     UnityEngine.Vector3 dest;
     // Start is called before the first frame update
