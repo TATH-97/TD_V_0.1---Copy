@@ -9,33 +9,35 @@ public class PlayerMovementController : NetworkBehaviour
     public float moveSpeed= 0.1f;
     public GameObject PlayerModel;
     public Rigidbody2D rb;
-    Vector2 movement;
+    //public GameObject selectedSpawner;
 
-//     void Start() {
-//         PlayerModel.SetActive(false);
-//     }
+    private void Start() {
+        PlayerModel.SetActive(true);
+    }
 
-//     // Update is called once per frame
-//     void Update()
-//     {
-//         movement.y=Input.GetAxisRaw("Vertical");
-//         movement.x=Input.GetAxisRaw("Horizontal");
-//     }
+    private void FixedUpdate() {
+        if(SceneManager.GetActiveScene().name=="GameBoard1") {
+            if(PlayerModel.activeSelf==false) {
+                SetPosition();
+                PlayerModel.SetActive(true);
+            }
+            if(isOwned) {
+                Movement();
+            }
+        }
+    }
 
-//     void FixedUpdate() {
-//         rb.MovePosition(rb.position+movement*moveSpeed*Time.fixedDeltaTime);        
-//     }
+    public void Movement() {
+        float xDirection=Input.GetAxis("Horizontal"); 
+        float yDirection= Input.GetAxis("Vertical");
 
-//     void OnCollisionEnter(Collision col) {
-//         Debug.Log("OW!");
-//     }
+        UnityEngine.Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
 
-//     public void Movement() {
-//         float xDirection=Input.GetAxis("Horizontal"); 
-//         float yDirection= Input.GetAxis("Vertical");
+        transform.position += moveDirection * moveSpeed;
+    }
 
-//         Vector2 moveDirection =new Vector2(xDirection, yDirection);
-
-//         transform.position = (moveDirection * moveSpeed) + transform.position;
-//     }
+    public void SetPosition() {
+        //transform.position=selectedSpawner.transform.position;
+        transform.position=new Vector3(-10.5f, 10.5f, 0.0f);
+    }
 }

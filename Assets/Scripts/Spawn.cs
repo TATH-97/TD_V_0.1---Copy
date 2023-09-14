@@ -10,7 +10,7 @@ public class Spawn : MonoBehaviour {
     [SerializeField] GameObject spawnee;
     [SerializeField] Transform dest;
    
-    //private GameObject newBorn;
+    private GameObject newBorn;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +22,7 @@ public class Spawn : MonoBehaviour {
         for(int i=0; i<count; i++) {
             GameObject newBorn=Instantiate(spawnee) as GameObject;
             BasicMinionMovement move=newBorn.GetComponent<BasicMinionMovement>();
+            newBorn.transform.position=new Vector3(-49.5f, 26.5f, 0.1f);
             move.setTarget(dest);
         }
     }

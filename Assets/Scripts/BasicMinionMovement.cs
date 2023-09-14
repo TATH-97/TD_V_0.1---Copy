@@ -8,10 +8,9 @@ using Mirror;
 public class BasicMinionMovement : NetworkBehaviour
 {
 
-    Transform target;
+    [SerializeField] Transform target;
 
     public void setTarget(Transform t) {
-        Debug.Log("Target set");
         target=t;
     }
 
@@ -27,7 +26,8 @@ public class BasicMinionMovement : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {   
+    {  
+        //Debug.Log(transform.position.ToString()); 
         if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) {
             dest = target.position;
             agent.destination = dest;
