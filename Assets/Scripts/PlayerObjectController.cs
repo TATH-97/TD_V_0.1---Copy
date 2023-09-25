@@ -13,6 +13,8 @@ public class PlayerObjectController : NetworkBehaviour
     [SyncVar(hook = nameof(PlayerNameUpdate))] public string PlayerName;
     [SyncVar(hook = nameof(PlayerReadyUdate))] public bool Ready;
 
+    public bool isDefender=false;
+
     void Start() {
         DontDestroyOnLoad(this.gameObject);
     }
@@ -27,13 +29,21 @@ public class PlayerObjectController : NetworkBehaviour
             }
         }
     }
+
+    public void ChangeUIBool() {
+        if(isOwned) {
+            this.isDefender=!isDefender;
+        }
+        Debug.Log("isDefender= "+isDefender.ToString());
+    }  
+
     private void PlayerReadyUdate(bool oldVal, bool newValue) {
         if(isServer) {
-            Debug.Log("isServer");
+            //Debug.Log("isServer");
             this.Ready=newValue;
             LobbyController.Instance.UpdatePlayerList();
         }
-        if (isClient && !isServer) { //May need just isClient
+        if (isClient && !isServer) { //May need && !isServer
             LobbyController.Instance.UpdatePlayerList();
         }
     }
@@ -44,16 +54,16 @@ public class PlayerObjectController : NetworkBehaviour
     } 
 
     public void ChangeReady() {
-        Debug.Log("ChangeReady");
+        //Debug.Log("ChangeReady");
         if(isOwned) {//hasAuthority 
-            Debug.Log("isOwned");
+           // Debug.Log("isOwned");
             cmdSetPlayerReady();
         }
     }
 
     public override void OnStartAuthority() {
         CmdSetPlayerName(SteamFriends.GetPersonaName().ToString());
-        Debug.Log(SteamFriends.GetPersonaName().ToString());
+        //Debug.Log(SteamFriends.GetPersonaName().ToString());
         gameObject.name="LocalGamePlayer";
         LobbyController.Instance.FindLocalPlayer();
         LobbyController.Instance.UpdateLobbyName();
@@ -79,7 +89,7 @@ public class PlayerObjectController : NetworkBehaviour
         if(isServer) { //Host
             this.PlayerName=NewValue;
         } 
-        if(isClient && !isServer) {//client
+        if(isClient && !isServer) {//client && !isServer
             LobbyController.Instance.UpdatePlayerList();
         }
     }

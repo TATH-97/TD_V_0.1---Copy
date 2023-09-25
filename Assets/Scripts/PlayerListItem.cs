@@ -29,6 +29,7 @@ public class PlayerListItem : MonoBehaviour
         }
         ChangeReadyStatus();
         PlayerNameText.text=PlayerName;
+        Debug.Log(PlayerName);
     }
 
 

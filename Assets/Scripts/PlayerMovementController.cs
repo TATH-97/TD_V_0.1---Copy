@@ -10,16 +10,21 @@ public class PlayerMovementController : NetworkBehaviour
     public GameObject PlayerModel;
     public Rigidbody2D rb;
     //public GameObject selectedSpawner;
+    private bool changed=false;
 
     private void Start() {
         PlayerModel.SetActive(true);
+        SetPosition();
     }
 
     private void FixedUpdate() {
         if(SceneManager.GetActiveScene().name=="GameBoard1") {
-            if(PlayerModel.activeSelf==false) {
-                SetPosition();
-                PlayerModel.SetActive(true);
+            if(!changed && isOwned) {
+                PlayerObjectController thing=this.GetComponentInParent<PlayerObjectController>();
+                GameObject.Find("DefenderUI").SetActive(thing.isDefender);
+                GameObject.Find("AttackerUI").SetActive(!thing.isDefender);
+                Debug.Log("SetUI "+thing.isDefender.ToString());
+                changed=true;
             }
             if(isOwned) {
                 Movement();
@@ -36,8 +41,18 @@ public class PlayerMovementController : NetworkBehaviour
         transform.position += moveDirection * moveSpeed;
     }
 
+    //Attacker abilities
+    public void Attack() {
+
+    }
+
+    //Defender RuleSet
+    public void DefenderStuff() {
+
+    }
+
     public void SetPosition() {
         //transform.position=selectedSpawner.transform.position;
-        transform.position=new Vector3(-10.5f, 10.5f, 0.0f);
+        transform.position=new Vector3(-30.5f, 30.5f, 0.0f);
     }
 }

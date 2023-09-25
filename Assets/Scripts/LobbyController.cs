@@ -5,7 +5,6 @@ using Mirror;
 using Steamworks;
 using UnityEngine.UI;
 using System.Linq;
-using TMPro;
 public class LobbyController : MonoBehaviour
 {
     public static LobbyController Instance;
@@ -27,6 +26,8 @@ public class LobbyController : MonoBehaviour
     public Button StartGameButton;
     public Text ReadyButtonText;
 
+    public Toggle defenderUI;
+
     //Manager 
     private CustomNetworkManager manager; 
     private CustomNetworkManager Manager {
@@ -43,6 +44,11 @@ public class LobbyController : MonoBehaviour
         if(Instance==null) {
             Instance=this;
         }
+    }
+
+    public void DefenderUI() {
+        Debug.Log("UI Change, LobbyController " + LocalPlayerController.PlayerName);
+        LocalPlayerController.ChangeUIBool();
     }
 
     public void ReadyPlayer() {
@@ -69,7 +75,7 @@ public class LobbyController : MonoBehaviour
             }
         }
         if(allReady) {
-            if(LocalPlayerController.PlayerIDNumber==1) {
+            if(LocalPlayerController.PlayerIDNumber==1) { //if host
                 StartGameButton.interactable=true;
             } else {
                 StartGameButton.interactable=false;
