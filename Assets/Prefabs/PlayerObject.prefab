@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4392963518432798560}
   - component: {fileID: 5078612663296182343}
   - component: {fileID: -6082283730351785338}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,6 +76,7 @@ MonoBehaviour:
   PlayerSteamID: 0
   PlayerName: 
   Ready: 0
+  isDefender: 0
 --- !u!70 &5027397207950916080
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -198,7 +199,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4935293310770899499}
   - component: {fileID: 3565757628485653194}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +282,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8629560070514700462}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}

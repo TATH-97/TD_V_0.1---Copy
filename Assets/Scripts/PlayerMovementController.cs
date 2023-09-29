@@ -41,7 +41,7 @@ public class PlayerMovementController : NetworkBehaviour
         transform.position += moveDirection * moveSpeed;
     }
 
-    //Attacker abilities
+    //Attacker RuleSet
     public void Attack() {
 
     }
