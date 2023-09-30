@@ -204,7 +204,7 @@ MonoBehaviour:
   firingPoint: {fileID: 6743348903625595889}
   maxRange: 20
   rotationSpeed: 400
-  bps: 15
+  bps: 50
 --- !u!114 &3586633646682602489
 MonoBehaviour:
   m_ObjectHideFlags: 0
