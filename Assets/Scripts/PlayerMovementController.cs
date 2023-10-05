@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
+using Unity.Mathematics;
+using NavMeshPlus.Components;
+using Unity.VisualScripting;
 
 public class PlayerMovementController : NetworkBehaviour
 {
@@ -11,44 +12,64 @@ public class PlayerMovementController : NetworkBehaviour
     public Rigidbody2D rb;
     //public GameObject selectedSpawner;
     private bool changed=false;
+    private PlayerObjectController parent;
+    public DefenderRuleset rulesD;
+    private NavMeshSurface navMesh;
 
     private void Start() {
         PlayerModel.SetActive(true);
         SetPosition();
+        parent=this.GetComponentInParent<PlayerObjectController>();
     }
 
     private void FixedUpdate() {
-        if(SceneManager.GetActiveScene().name=="GameBoard1") {
-            if(!changed && isOwned) {
-                PlayerObjectController thing=this.GetComponentInParent<PlayerObjectController>();
-                GameObject.Find("DefenderUI").SetActive(thing.isDefender);
-                GameObject.Find("AttackerUI").SetActive(!thing.isDefender);
-                Debug.Log("SetUI "+thing.isDefender.ToString());
-                changed=true;
-            }
+        if(SceneManager.GetActiveScene().name=="GameBoard1") { //find more effecient way to detect scene
             if(isOwned) {
-                Movement();
-            }
+                //Setup
+                if(!changed) {//only happens at start
+                    GameObject.Find("DefenderUI").SetActive(parent.isDefender);
+                    GameObject.Find("AttackerUI").SetActive(!parent.isDefender);
+                    navMesh=GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
+                    //activate ruleSet for each player
+                    if(parent.isDefender) {
+                        rulesD=GetComponentInParent<DefenderRuleset>();
+                        rulesD.SetParent(parent);
+                        //set attacker script to false
+                    } else {
+                        //Attacker rules
+                        Destroy(this.GetComponentInParent<DefenderRuleset>());
+                    }
+                    changed=true;
+                }
+                //Setup
+                Movement(); //Need to move to specific attacker/defender scripts
+
+                if(parent.isDefender) {
+                    DefenderStuff();
+                } else {
+                    //attackerStuff
+                }
+            }        
         }
     }
 
     public void Movement() {
         float xDirection=Input.GetAxis("Horizontal"); 
         float yDirection= Input.GetAxis("Vertical");
-
-        UnityEngine.Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
-
+        Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
         transform.position += moveDirection * moveSpeed;
     }
 
     //Attacker RuleSet
-    public void Attack() {
+    public void AttackerStuff() {
 
     }
 
     //Defender RuleSet
     public void DefenderStuff() {
-
+        if(Input.GetMouseButton(0)) {
+            rulesD.ScreenMouseRay();
+        }
     }
 
     public void SetPosition() {

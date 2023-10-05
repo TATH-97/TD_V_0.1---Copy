@@ -27,6 +27,7 @@ public class SteamLobby : MonoBehaviour
 
    public void Start() {
     if(!SteamManager.Initialized) {
+      Debug.Log("Turn on Steam!");
         return;
     }
     if(Instance==null) {

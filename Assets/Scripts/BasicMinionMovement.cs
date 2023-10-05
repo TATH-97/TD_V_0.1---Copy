@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
@@ -9,6 +6,7 @@ public class BasicMinionMovement : NetworkBehaviour
 {
 
     [SerializeField] Transform target;
+    [SerializeField] Rigidbody2D rb;
 
     public void setTarget(Transform t) {
         target=t;
@@ -25,9 +23,8 @@ public class BasicMinionMovement : NetworkBehaviour
 	}
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {  
-        //Debug.Log(transform.position.ToString()); 
         if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) {
             dest = target.position;
             agent.destination = dest;

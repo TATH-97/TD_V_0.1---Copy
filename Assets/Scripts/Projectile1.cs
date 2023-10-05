@@ -29,7 +29,7 @@ public class Projectile1 : MonoBehaviour
 
     private void FixedUpdate() {
         if(target==null) {
-            Debug.Log("POP");
+            // Debug.Log("POP");
             Destroy(parent);
             Destroy(this);
             return;
@@ -49,7 +49,7 @@ public class Projectile1 : MonoBehaviour
             other.gameObject.GetComponent<MinionHealth>().TakeDamage(damageVal);
             Destroy(gameObject); 
         } else {
-            Debug.Log("OUCH!");
+            // Debug.Log("OUCH!");
         }  
     }
 }

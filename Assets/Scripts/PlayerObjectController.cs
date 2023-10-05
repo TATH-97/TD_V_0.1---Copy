@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Steamworks;
+using Unity.Mathematics;
 
 public class PlayerObjectController : NetworkBehaviour
 {

@@ -19,7 +19,7 @@ public class LobbyController : MonoBehaviour
     //Other Data
     public ulong CurrentLobbyID;
     public bool PlayerItemCreated =false;
-    private List<PlayerListItem> PlayerListItems=new List<PlayerListItem>();
+    public List<PlayerListItem> PlayerListItems=new List<PlayerListItem>();
     public PlayerObjectController LocalPlayerController;
 
     //Ready
