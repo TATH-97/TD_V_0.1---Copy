@@ -14,7 +14,6 @@ public class PlayerMovementController : NetworkBehaviour
     private bool changed=false;
     private PlayerObjectController parent;
     public DefenderRuleset rulesD;
-    private NavMeshSurface navMesh;
 
     private void Start() {
         PlayerModel.SetActive(true);
@@ -29,11 +28,10 @@ public class PlayerMovementController : NetworkBehaviour
                 if(!changed) {//only happens at start
                     GameObject.Find("DefenderUI").SetActive(parent.isDefender);
                     GameObject.Find("AttackerUI").SetActive(!parent.isDefender);
-                    navMesh=GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
                     //activate ruleSet for each player
                     if(parent.isDefender) {
                         rulesD=GetComponentInParent<DefenderRuleset>();
-                        rulesD.SetParent(parent);
+                        rulesD.Inst();
                         //set attacker script to false
                     } else {
                         //Attacker rules

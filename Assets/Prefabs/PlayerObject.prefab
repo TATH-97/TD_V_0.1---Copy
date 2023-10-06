@@ -206,6 +206,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  sceneCamera: {fileID: 0}
+  cellIndicator: {fileID: 1558251357582338258, guid: b0c4d8b3de256c640837d9ac001f925d, type: 3}
 --- !u!1 &2735894522991360925
 GameObject:
   m_ObjectHideFlags: 0
