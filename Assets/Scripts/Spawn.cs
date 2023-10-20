@@ -4,13 +4,11 @@ using System.Threading;
 using UnityEngine;
 using Mirror;
 
-public class Spawn : MonoBehaviour {
+public class Spawn : NetworkBehaviour {
 
     [SerializeField] int count;
     [SerializeField] GameObject spawnee;
     [SerializeField] Transform dest;
-   
-    private GameObject newBorn;
 
     // Start is called before the first frame update
     void Start()
@@ -20,10 +18,17 @@ public class Spawn : MonoBehaviour {
 
     void spawn() {
         for(int i=0; i<count; i++) {
-            GameObject newBorn=Instantiate(spawnee) as GameObject;
-            BasicMinionMovement move=newBorn.GetComponent<BasicMinionMovement>();
-            newBorn.transform.position=new Vector3(-49.5f, 26.5f, 0.1f);
-            move.setTarget(dest);
+            Vector3 pos =new Vector3(-44.5f, 21.5f, 0f);
+            cmdSpawn(pos, Quaternion.identity);
         }
+    }
+
+    [Command]
+    void cmdSpawn(Vector3 pos, Quaternion rot) {
+        GameObject newBorn=Instantiate(spawnee);
+        BasicMinionMovement move =newBorn.GetComponent<BasicMinionMovement>();
+        move.setTarget(dest);
+        newBorn.transform.SetPositionAndRotation(pos, rot);
+        NetworkServer.Spawn(newBorn);
     }
 }

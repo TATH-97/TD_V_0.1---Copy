@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Projectile1 : MonoBehaviour
 {
@@ -10,12 +7,11 @@ public class Projectile1 : MonoBehaviour
     [SerializeField] private int damageVal=1;
     [SerializeField] private int dist;
     private Transform target;
-    private float Hx;
-    private float Hy;
     private Vector3 home;
     private GameObject parent;
 
     public void SetTarget(Transform _target) {
+        rb.mass=0;
         target=_target;
     }
 
@@ -34,19 +30,17 @@ public class Projectile1 : MonoBehaviour
             Destroy(this);
             return;
         }
-        if(Vector3.Distance(this.transform.position, home)>=dist) {
-            Destroy(this);
+        if(Vector3.Distance(this.transform.position, home)>dist) {
+            Destroy(gameObject);
             return;
         }
         Vector2 direction =target.position-transform.position;
-
         rb.velocity=direction * bulletVelosity;    
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-        //take health from minion. Will need diff function for players
-        if(other.gameObject.GetComponent<MinionHealth>()!=null) {
-            other.gameObject.GetComponent<MinionHealth>().TakeDamage(damageVal);
+        if(other.gameObject.GetComponent<ItemHealth>()!=null && other.gameObject.layer==6) {
+            other.gameObject.GetComponent<ItemHealth>().TakeDamage(damageVal);
             Destroy(gameObject); 
         } else {
             // Debug.Log("OUCH!");

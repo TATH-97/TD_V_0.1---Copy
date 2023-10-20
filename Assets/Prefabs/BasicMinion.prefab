@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3587943186575323314}
   - component: {fileID: 3587943186575323313}
   - component: {fileID: 7603297100036977776}
-  - component: {fileID: 2729380342584724490}
+  - component: {fileID: -6646213845916180554}
   m_Layer: 6
   m_Name: BasicMinion
   m_TagString: Untagged
@@ -109,6 +109,7 @@ MonoBehaviour:
   syncInterval: 0
   target: {fileID: 0}
   rb: {fileID: 3587943186575323313}
+  damage: 3
 --- !u!195 &3587943186575323317
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -119,7 +120,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -130,7 +131,7 @@ NavMeshAgent:
   m_Height: 1
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 1
 --- !u!114 &3587943186575323312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,7 +187,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1
 --- !u!50 &3587943186575323313
 Rigidbody2D:
   serializedVersion: 4
@@ -242,7 +243,7 @@ MonoBehaviour:
   positionPrecision: 0.01
   scalePrecision: 0.01
   timelineOffset: 0
---- !u!114 &2729380342584724490
+--- !u!114 &-6646213845916180554
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -251,7 +252,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3587943186575323321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c17f24d057a336442a0ff852b8e63e23, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a3cfe96d3d185c43a1dd01a9231ab93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPoints: 70
+  startingHealth: 70

@@ -161,6 +161,7 @@ GameObject:
   - component: {fileID: 3586633646682602489}
   - component: {fileID: 6793195914110593860}
   - component: {fileID: 6552188329526944313}
+  - component: {fileID: 7730524950751946044}
   m_Layer: 8
   m_Name: BasicTurret
   m_TagString: Untagged
@@ -282,7 +283,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 2
+--- !u!114 &7730524950751946044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6743348904292647505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3cfe96d3d185c43a1dd01a9231ab93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 10
 --- !u!1 &6743348904541184070
 GameObject:
   m_ObjectHideFlags: 0

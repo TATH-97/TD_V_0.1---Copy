@@ -2,8 +2,6 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
 using Unity.Mathematics;
-using NavMeshPlus.Components;
-using Unity.VisualScripting;
 
 public class PlayerMovementController : NetworkBehaviour
 {
@@ -24,7 +22,7 @@ public class PlayerMovementController : NetworkBehaviour
     private void FixedUpdate() {
         if(SceneManager.GetActiveScene().name=="GameBoard1") { //find more effecient way to detect scene
             if(isOwned) {
-                //Setup
+                //**********Setup**********
                 if(!changed) {//only happens at start
                     GameObject.Find("DefenderUI").SetActive(parent.isDefender);
                     GameObject.Find("AttackerUI").SetActive(!parent.isDefender);
@@ -39,7 +37,7 @@ public class PlayerMovementController : NetworkBehaviour
                     }
                     changed=true;
                 }
-                //Setup
+                //**********Setup**********
                 Movement(); //Need to move to specific attacker/defender scripts
 
                 if(parent.isDefender) {
@@ -68,6 +66,10 @@ public class PlayerMovementController : NetworkBehaviour
         if(Input.GetMouseButton(0)) {
             rulesD.ScreenMouseRay();
         }
+    }
+
+    public void ArmClicker() {
+        Debug.Log("thing");
     }
 
     public void SetPosition() {

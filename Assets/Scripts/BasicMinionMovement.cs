@@ -7,6 +7,7 @@ public class BasicMinionMovement : NetworkBehaviour
 
     [SerializeField] Transform target;
     [SerializeField] Rigidbody2D rb;
+    [SerializeField] int damage;
 
     public void setTarget(Transform t) {
         target=t;
@@ -28,6 +29,15 @@ public class BasicMinionMovement : NetworkBehaviour
         if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) {
             dest = target.position;
             agent.destination = dest;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D other) {
+        GameObject go=other.gameObject;
+        if(go.layer==8) {
+            Debug.Log("Do damage");
+            ItemHealth H=go.GetComponent<ItemHealth>();
+            H.TakeDamage(damage);
         }
     }
 }

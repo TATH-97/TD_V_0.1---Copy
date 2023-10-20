@@ -1,16 +1,12 @@
-using NavMeshPlus.Components;
 using UnityEngine;
 using Mirror;
-using UnityEditor;
 
 public class DefenderRuleset : NetworkBehaviour
 {
-    private NavMeshSurface navMesh;
     private GridLayout board;
 
     public void Inst() {
-        navMesh=GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
-        GameObject[] objs=BuildManager.instance.GetPrefabs();
+        GameObject[] objs=LevelManager.instance.GetPrefabs();
         foreach(GameObject gm in objs) {
             NetworkClient.RegisterPrefab(gm); //may need some kinda ID
         }
@@ -31,31 +27,8 @@ public class DefenderRuleset : NetworkBehaviour
             }
             if(canBuild) {
                 Build(GetCellPos(worldPosition));
-            } else {
-                Debug.Log("Cant build here");
-            }
+            } 
         }
-
-        // bool canBuild=true;
-        // Vector3 mousePos = Input.mousePosition;
-        // mousePos.z = Camera.main.nearClipPlane;
-        // Collider2D[] col = Physics2D.OverlapPointAll(mousePos);
-        // Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
-        // // worldPosition.z=0;
-        // if(col.Length > 0){
-        //     Debug.Log("ray hit");
-        //     foreach(Collider2D c in col) {
-        //         if(c.GetComponent<Collider2D>().gameObject.layer!=0) {
-        //             canBuild=false;
-        //         }
-        //     }   
-        // }
-        // if(canBuild) {
-        //         worldPosition.z=0;
-        //         Build(GetCellPos(worldPosition));
-        //     } else {
-        //         Debug.Log("Cant build");
-        //     }
     }   
 
     private Vector3 GetCellPos(Vector3 mousePosition) {
@@ -70,7 +43,7 @@ public class DefenderRuleset : NetworkBehaviour
 
     [Command]
     private void CmdBuild(Vector3 pos, Quaternion rot) {
-        GameObject towerToBuild = BuildManager.instance.getSelectedTower();
+        GameObject towerToBuild = BuildManager.instance.GetSelectedTower();
         GameObject tower=Instantiate(towerToBuild);
         tower.transform.SetPositionAndRotation(pos, rot);
         NetworkServer.Spawn(tower);
