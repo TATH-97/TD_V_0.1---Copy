@@ -35,7 +35,7 @@ public class BasicMinionMovement : NetworkBehaviour
     void OnCollisionEnter2D(Collision2D other) {
         GameObject go=other.gameObject;
         if(go.layer==8) {
-            Debug.Log("Do damage");
+            // Debug.Log("Do damage");
             ItemHealth H=go.GetComponent<ItemHealth>();
             H.TakeDamage(damage);
         }

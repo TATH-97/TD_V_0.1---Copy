@@ -13,6 +13,12 @@ public class DefenderRuleset : NetworkBehaviour
         board=LevelManager.instance.gameBoard;
     }
 
+    public void Actions() {
+        if(Input.GetMouseButton(0)) {
+            ScreenMouseRay();
+        }
+    }
+
     public void ScreenMouseRay() {
         bool canBuild=true;
         Vector3 mousePosition = Input.mousePosition;
@@ -44,6 +50,9 @@ public class DefenderRuleset : NetworkBehaviour
     [Command]
     private void CmdBuild(Vector3 pos, Quaternion rot) {
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
+        if(towerToBuild==null) {
+            return;
+        }
         if(towerToBuild.cost<=BuildManager.instance.currency) {
             GameObject tower=Instantiate(towerToBuild.prefab);
             tower.transform.SetPositionAndRotation(pos, rot);

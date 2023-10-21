@@ -41,7 +41,6 @@ public class PlayerMovementController : NetworkBehaviour
                 }
                 //**********Setup**********
                 Movement(); //Need to move to specific attacker/defender scripts
-
                 if(parent.isDefender) {
                     DefenderStuff();
                 } else {
@@ -65,17 +64,11 @@ public class PlayerMovementController : NetworkBehaviour
 
     //Defender RuleSet
     public void DefenderStuff() {
-        if(Input.GetMouseButton(0)) {
-            rulesD.ScreenMouseRay();
-        }
-    }
-
-    public void ArmClicker() {
-        Debug.Log("thing");
+        rulesD.Actions();
     }
 
     public void SetPosition() {
         //transform.position=selectedSpawner.transform.position;
-        transform.position=new Vector3(-30.5f, 30.5f, 0.0f);
+        transform.position=new Vector3(-49f, 20.5f, 0.0f);
     }
 }
