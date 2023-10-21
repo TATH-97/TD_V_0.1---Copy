@@ -43,9 +43,14 @@ public class DefenderRuleset : NetworkBehaviour
 
     [Command]
     private void CmdBuild(Vector3 pos, Quaternion rot) {
-        GameObject towerToBuild = BuildManager.instance.GetSelectedTower();
-        GameObject tower=Instantiate(towerToBuild);
-        tower.transform.SetPositionAndRotation(pos, rot);
-        NetworkServer.Spawn(tower);
+        Tower towerToBuild = BuildManager.instance.GetSelectedTower();
+        if(towerToBuild.cost<=BuildManager.instance.currency) {
+            GameObject tower=Instantiate(towerToBuild.prefab);
+            tower.transform.SetPositionAndRotation(pos, rot);
+            NetworkServer.Spawn(tower);
+            BuildManager.instance.currency-=towerToBuild.cost;
+        } else {
+            Debug.Log("Your broke");
+        }
     }
 }

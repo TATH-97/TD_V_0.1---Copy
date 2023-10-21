@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Tower 
+public class Tower
 {
-    public string name;
     public int cost;
-    public GameObject prefab; 
+    public GameObject prefab;
+    public string name; 
 
     public Tower(string _name, int _cost, GameObject _prefab) {
         name=_name;
@@ -14,5 +14,8 @@ public class Tower
         prefab=_prefab;
     }
 
-    
+    public static explicit operator GameObject(Tower v)
+    {
+        throw new NotImplementedException();
+    }
 }

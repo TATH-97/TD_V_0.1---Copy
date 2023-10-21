@@ -12,6 +12,7 @@ public class PlayerMovementController : NetworkBehaviour
     private bool changed=false;
     private PlayerObjectController parent;
     public DefenderRuleset rulesD;
+    public AttackerRuleSet rulesA;
 
     private void Start() {
         PlayerModel.SetActive(true);
@@ -30,9 +31,10 @@ public class PlayerMovementController : NetworkBehaviour
                     if(parent.isDefender) {
                         rulesD=GetComponentInParent<DefenderRuleset>();
                         rulesD.Inst();
-                        //set attacker script to false
+                        Destroy(this.GetComponentInParent<AttackerRuleSet>());
                     } else {
                         //Attacker rules
+                        rulesA=GetComponentInParent<AttackerRuleSet>();
                         Destroy(this.GetComponentInParent<DefenderRuleset>());
                     }
                     changed=true;
@@ -43,7 +45,7 @@ public class PlayerMovementController : NetworkBehaviour
                 if(parent.isDefender) {
                     DefenderStuff();
                 } else {
-                    //attackerStuff
+                    AttackerStuff();
                 }
             }        
         }
@@ -58,7 +60,7 @@ public class PlayerMovementController : NetworkBehaviour
 
     //Attacker RuleSet
     public void AttackerStuff() {
-
+        
     }
 
     //Defender RuleSet
