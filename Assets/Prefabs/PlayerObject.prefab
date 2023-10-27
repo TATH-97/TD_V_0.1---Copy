@@ -115,6 +115,7 @@ MonoBehaviour:
   PlayerModel: {fileID: 957748432460793424}
   rb: {fileID: 4392963518432798560}
   rulesD: {fileID: 0}
+  rulesA: {fileID: 0}
 --- !u!50 &4392963518432798560
 Rigidbody2D:
   serializedVersion: 4
@@ -220,6 +221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e87b46a36066e468d2fdb64afb22c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  items: []
+  abilitiesActive: 
+  damage: 20
+  weapon: {fileID: 0}
 --- !u!114 &-3624100325193169020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3cfe96d3d185c43a1dd01a9231ab93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 50
+  startingHealth: 100
 --- !u!1 &2735894522991360925
 GameObject:
   m_ObjectHideFlags: 0

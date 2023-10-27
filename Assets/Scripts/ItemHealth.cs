@@ -6,9 +6,11 @@ public class ItemHealth : MonoBehaviour
     [SerializeField] public int startingHealth;
 
     public void TakeDamage(int damage) {
-        // Debug.Log("Take "+damage);
         startingHealth-=damage;
         if(startingHealth<=0) {
+            if(GetComponentInParent<BasicMinionMovement>()!=null) {
+                LevelManager.onMinionKilled.Invoke();
+            }
             // manager.DestroyBldg(gameObject); //maybe need for networking?
             Destroy(gameObject);
         }

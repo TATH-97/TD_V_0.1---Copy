@@ -6,10 +6,6 @@ public class DefenderRuleset : NetworkBehaviour
     private GridLayout board;
 
     public void Inst() {
-        GameObject[] objs=LevelManager.instance.GetPrefabs();
-        foreach(GameObject gm in objs) {
-            NetworkClient.RegisterPrefab(gm); //may need some kinda ID
-        }
         board=LevelManager.instance.gameBoard;
     }
 

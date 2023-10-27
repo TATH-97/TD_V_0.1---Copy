@@ -4,8 +4,8 @@ using Mirror;
 
 public class BasicMinionMovement : NetworkBehaviour
 {
-
-    [SerializeField] Transform target;
+    [SerializeField] public GameObject _target;
+    [SerializeField] public Transform target; 
     [SerializeField] Rigidbody2D rb;
     [SerializeField] int damage;
 
@@ -17,6 +17,7 @@ public class BasicMinionMovement : NetworkBehaviour
     UnityEngine.Vector3 dest;
     // Start is called before the first frame update
     void Start()	{
+        // target = _target.transform;
 		agent = GetComponent<NavMeshAgent>();
 		agent.updateRotation = false;
 		agent.updateUpAxis = false;
@@ -29,6 +30,7 @@ public class BasicMinionMovement : NetworkBehaviour
         if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) {
             dest = target.position;
             agent.destination = dest;
+            // Debug.Log(transform.position.ToString());
         }
     }
 

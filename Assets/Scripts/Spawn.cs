@@ -1,34 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using Mirror;
+using System;
+using System.Collections;
 
-public class Spawn : NetworkBehaviour {
+public class Spawn : MonoBehaviour {
 
-    [SerializeField] int count;
-    [SerializeField] GameObject spawnee;
+    [SerializeField] GameObject[] spawnees; //list of possable spawnees
     [SerializeField] Transform dest;
+    private ArrayList minions = new ArrayList();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        spawn();
+    private int idex;
+
+
+    public void spawn() {  
+        cmdSpawn(transform.position, Quaternion.identity);
     }
 
-    void spawn() {
-        for(int i=0; i<count; i++) {
-            Vector3 pos =new Vector3(-44.5f, 21.5f, 0f);
-            cmdSpawn(pos, Quaternion.identity);
-        }
-    }
-
-    [Command]
+    //[Command(requiresAuthority = false)]
     void cmdSpawn(Vector3 pos, Quaternion rot) {
-        GameObject newBorn=Instantiate(spawnee);
+        GameObject newBorn=Instantiate(spawnees[idex]);
         BasicMinionMovement move =newBorn.GetComponent<BasicMinionMovement>();
         move.setTarget(dest);
         newBorn.transform.SetPositionAndRotation(pos, rot);
         NetworkServer.Spawn(newBorn);
+        minions.Add(newBorn);
     }
 }

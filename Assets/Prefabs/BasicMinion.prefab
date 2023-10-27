@@ -107,9 +107,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _target: {fileID: 2698056253522369948, guid: 211236978e3659044b1ef6ca08be752d, type: 3}
   target: {fileID: 0}
   rb: {fileID: 3587943186575323313}
-  damage: 3
+  damage: 5
 --- !u!195 &3587943186575323317
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -255,4 +256,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3cfe96d3d185c43a1dd01a9231ab93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 70
+  startingHealth: 50

@@ -9,8 +9,6 @@ public class BuildManager : NetworkBehaviour
 
     // [SerializeField] private GameObject[] buildingPrefabs;
     [SerializeField] private Tower[] buildingPrefabs;
-
-    private PlayerMovementController[] defendingPlayers;
     public int currency;
     private int selectedTower=0;
     public Tower GetSelectedTower() {
@@ -33,7 +31,8 @@ public class BuildManager : NetworkBehaviour
     private void Awake() {
         if(instance==null) {
             instance=this;
-        }        
+        }    
+        Inst();    
     }
 
     public void ArmClicker() {
@@ -58,6 +57,13 @@ public class BuildManager : NetworkBehaviour
 
     public void SetSelectedTower(int idx) {
         selectedTower=idx;
+    }
+
+        private void Inst() {
+        GameObject[] objs=LevelManager.instance.GetPrefabs();
+        foreach(GameObject gm in objs) {
+            NetworkClient.RegisterPrefab(gm); //may need some kinda ID
+        }
     }
 
 }
