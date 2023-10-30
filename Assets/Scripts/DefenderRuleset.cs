@@ -4,9 +4,13 @@ using Mirror;
 public class DefenderRuleset : NetworkBehaviour
 {
     private GridLayout board;
+    [SerializeField] private Sprite change;
+    [SerializeField] private SpriteRenderer sr; 
 
     public void Inst() {
         board=LevelManager.instance.gameBoard;
+        sr.sprite=change;
+        sr.color= new Color(0.5660378f, 0.509434f, 509434f, 1); 
     }
 
     public void Actions() {

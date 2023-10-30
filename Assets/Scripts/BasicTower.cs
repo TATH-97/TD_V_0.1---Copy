@@ -36,7 +36,6 @@ public class BasicTower : MonoBehaviour
         Projectile1 bulletScript = bullet.GetComponent<Projectile1>();
         bulletScript.SetTarget(target); 
         bulletScript.SetHome(transform);
-        bulletScript.SetParent(bullet);
     }
 
     private void FindTarget() {

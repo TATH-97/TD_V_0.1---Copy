@@ -19,23 +19,27 @@ public class Projectile1 : MonoBehaviour
         home=Home.position;
     }
 
-    public void SetParent(GameObject p) {
-        parent=p;
-    }
+    // public void SetParent(GameObject p) {
+    //     parent=p;
+    // }
 
     private void FixedUpdate() {
         if(target==null) {
             // Debug.Log("POP");
-            Destroy(parent);
+            Destroy(gameObject);
             Destroy(this);
             return;
         }
         if(Vector3.Distance(this.transform.position, home)>dist) {
             Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Vector2 direction =target.position-transform.position;
-        rb.velocity=direction * bulletVelosity;    
+        rb.velocity=direction * bulletVelosity; 
+        if(target.gameObject.layer!=6) {
+            Destroy(gameObject);
+        }   
     }
 
     private void OnCollisionEnter2D(Collision2D other) {

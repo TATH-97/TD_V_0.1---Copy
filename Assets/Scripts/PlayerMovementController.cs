@@ -32,6 +32,7 @@ public class PlayerMovementController : NetworkBehaviour
                         rulesD=GetComponentInParent<DefenderRuleset>();
                         rulesD.Inst();
                         Destroy(this.GetComponentInParent<AttackerRuleSet>());
+                        gameObject.layer=9;
                     } else {
                         //Attacker rules
                         rulesA=GetComponentInParent<AttackerRuleSet>();
@@ -59,7 +60,7 @@ public class PlayerMovementController : NetworkBehaviour
 
     //Attacker RuleSet
     public void AttackerStuff() {
-        
+        rulesA.Actions();
     }
 
     //Defender RuleSet

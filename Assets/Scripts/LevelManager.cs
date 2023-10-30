@@ -5,37 +5,37 @@ using Mirror;
 using UnityEngine.Events;
 using Unity.Mathematics;
 using UnityEngine.UI;
-using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
    public static LevelManager instance;
    [SerializeField] public GameObject[] spawnablePrefabs; //used for server overrides, allows server to spawn what is in this
-   [SerializeField] private GameObject[] spawners; //Maybe find better way to do this
+   [SerializeField] private GameObject[] spawners; //Array of spawn locations
    [SerializeField] private GameObject[] spawnees; // array of spawnable minions
 
    [SerializeField] public GridLayout gameBoard; //The hexboard
-   [SerializeField] public GameObject spire;
+   [SerializeField] public GameObject spire; //minion destenation
 
     [SerializeField] private int baseCount=12;
     [SerializeField] private float scalingFactor=.75f;
+    [SerializeField] private Button startWaveButton;
     private ArrayList spawnLocations = new ArrayList(); 
-    // private ArrayList minions = new ArrayList();
-    private float minionsPerSecond=.5f;  
-    private float timeBetweenWaves=5f; //update
-    private int waveCount=1;
+    private float minionsPerSecond=1f;  
+    private float timeBetweenWaves=60f; //update
+    private int waveCount=0;
     private float lastSpawnTime=0f;  
-    private float lastWaveTime;
-    private float time1;
-    private int minionsAlive=0;
+    private float lastWaveTime=0;
     private int minionsLeftToSpawn;  
-    private bool isSpawning=false; 
-    private int minionsPerSource;
+    public bool isSpawning=false; 
+    private int minionsPerSource=0;
     private int remainder; 
     private int idex=0;
+    private int minionsToKill=0;
+    private int minionsKilled=0;
 
     public static UnityEvent onMinionKilled = new UnityEvent();
     [SerializeField] public Text displayTimer;
+    [SerializeField] public Text roundCounter;
 
 
    private void Awake() {
@@ -43,61 +43,65 @@ public class LevelManager : MonoBehaviour
             instance=this;
         } 
         onMinionKilled.AddListener(MinionDestroyed);
-        Debug.Log("Past");
         foreach(GameObject gm in spawners) {
             spawnLocations.Add(gm.GetComponent<Transform>());
         }
+        roundCounter.text=waveCount.ToString();
     }
 
     private void Update() { 
         if(isSpawning) {
             TimeConversion(0f);
-            // Debug.Log("isSpawning");
             lastSpawnTime+=Time.deltaTime;
             if(lastSpawnTime>=1f/minionsPerSecond && minionsPerSource>0) {
-                // Debug.Log("Spawn");
                 foreach(Transform trans in spawnLocations) {
                     cmdSpawn(trans.position, Quaternion.identity);
                 }
                 minionsPerSource--;
             }
-            if(minionsAlive==0 && minionsPerSource<=0) {
+            if(minionsToKill-minionsKilled<=0) {
                 EndWave();
             }
         }
 
         if (!isSpawning) {
             lastWaveTime+=Time.deltaTime;
-            time1=timeBetweenWaves-lastWaveTime;
-            TimeConversion(time1);
-            if(lastWaveTime>=timeBetweenWaves) {
-                isSpawning=true;
+            TimeConversion(timeBetweenWaves-lastWaveTime);
+            if(lastWaveTime>=timeBetweenWaves && minionsToKill-minionsKilled<=0) {
                 StartWave();
             }
         }
     }
 
     private void MinionDestroyed() {
-        Debug.Log("MinionDestroyed");
-        minionsAlive--;
+        minionsKilled++;
     }
 
-    private void StartWave() {
+    public void StartWave() {
+        startWaveButton.interactable=false;
+        
         Debug.Log("StartWave");
+        waveCount++;
         minionsLeftToSpawn=minionsPerWave();
+        isSpawning=true;
         minionsPerSource=minionsLeftToSpawn/spawners.Length;
         remainder=minionsLeftToSpawn%spawners.Length;
         if(remainder>=(.5*spawners.Length)) {
             minionsPerSource++;
         }
-        waveCount++;
+        minionsToKill=minionsPerSource*spawners.Length;
+        Debug.Log("MinionsToKill: "+minionsToKill);
+        roundCounter.text=waveCount.ToString();
+        minionsKilled=0;
     }
 
     private void EndWave() {
         Debug.Log("End Wave");
+        Debug.Log("MinionsKilled: "+minionsKilled);
         BuildManager.instance.currency+=Mathf.RoundToInt((float)(100*math.pow(waveCount, scalingFactor)));
         isSpawning=false;
         lastWaveTime=0f;
+        startWaveButton.interactable=true;
     }
 
     private int minionsPerWave() {
@@ -110,7 +114,6 @@ public class LevelManager : MonoBehaviour
         move.setTarget(spire.transform);
         newBorn.transform.SetPositionAndRotation(pos, rot);
         NetworkServer.Spawn(newBorn);
-        minionsAlive++;
     }
 
     public GameObject[] GetPrefabs() {
