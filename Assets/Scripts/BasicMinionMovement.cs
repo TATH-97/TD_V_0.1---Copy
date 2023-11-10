@@ -6,7 +6,7 @@ using System.Collections;
 
 public class BasicMinionMovement : NetworkBehaviour
 {
-    [SerializeField] public GameObject _target;
+    [SerializeField] public GameObject targetGameobject;
     [SerializeField] public Transform target; 
     [SerializeField] Rigidbody2D rb;
     [SerializeField] int damage;
@@ -20,17 +20,18 @@ public class BasicMinionMovement : NetworkBehaviour
         target=t;
     }
     
-    void Start()	{
+    void Start() {
 		agent = GetComponent<NavMeshAgent>();
 		agent.updateRotation = false;
 		agent.updateUpAxis = false;
         dest = agent.destination;
+        setTarget(targetGameobject.transform);
 	}
 
     // Update is called once per frame
     void FixedUpdate()
     {  
-        if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) {
+        if(UnityEngine.Vector3.Distance(dest, target.position)>1.0f) { //issue
             dest = target.position;
             agent.destination = dest;
         }

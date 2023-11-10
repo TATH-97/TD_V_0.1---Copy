@@ -10,3 +10,4 @@ public class DefenderMenu : MonoBehaviour
         currencyUI.text=BuildManager.instance.currency.ToString();
     }
 }
+

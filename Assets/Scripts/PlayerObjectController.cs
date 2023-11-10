@@ -44,7 +44,7 @@ public class PlayerObjectController : NetworkBehaviour
             this.Ready=newValue;
             LobbyController.Instance.UpdatePlayerList();
         }
-        if (isClient && !isServer) { //May need && !isServer
+        if (isClient) { //May need && !isServer
             LobbyController.Instance.UpdatePlayerList();
         }
     }
@@ -71,6 +71,7 @@ public class PlayerObjectController : NetworkBehaviour
     }
 
     public override void OnStartClient() {
+        Debug.Log("Client?");
         Manager.GamePlayers.Add(this);
         LobbyController.Instance.UpdateLobbyName();
         LobbyController.Instance.UpdatePlayerList();
@@ -82,15 +83,15 @@ public class PlayerObjectController : NetworkBehaviour
     }
 
     [Command] 
-    private void CmdSetPlayerName(string PlayerName) {
-        this.PlayerNameUpdate(this.PlayerName, PlayerName);
+    private void CmdSetPlayerName(string input) {
+        this.PlayerNameUpdate(this.PlayerName, input);
     }
 
     public void PlayerNameUpdate(string OldValue, string NewValue) {
         if(isServer) { //Host
             this.PlayerName=NewValue;
         } 
-        if(isClient && !isServer) {//client && !isServer
+        if(isClient) { //isClient && !isServer
             LobbyController.Instance.UpdatePlayerList();
         }
     }

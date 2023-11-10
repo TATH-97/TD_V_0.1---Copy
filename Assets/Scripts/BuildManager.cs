@@ -28,6 +28,7 @@ public class BuildManager : NetworkBehaviour
     public Tower[] GetPrefabs() {
         return buildingPrefabs;
     }
+    
     private void Awake() {
         if(instance==null) {
             instance=this;
@@ -56,9 +57,11 @@ public class BuildManager : NetworkBehaviour
     }
 
     public void SetSelectedTower(int idx) {
+        Debug.Log("Selected Tower");
         selectedTower=idx;
     }
 
+        
         private void Inst() {
         GameObject[] objs=LevelManager.instance.GetPrefabs();
         foreach(GameObject gm in objs) {

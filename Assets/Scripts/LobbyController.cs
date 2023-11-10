@@ -47,12 +47,10 @@ public class LobbyController : MonoBehaviour
     }
 
     public void DefenderUI() {
-        Debug.Log("UI Change, LobbyController " + LocalPlayerController.PlayerName);
         LocalPlayerController.ChangeUIBool();
     }
 
     public void ReadyPlayer() {
-        Debug.Log("ReadyPlayer");
         LocalPlayerController.ChangeReady();
     }
 
@@ -93,7 +91,8 @@ public class LobbyController : MonoBehaviour
     public void UpdatePlayerList() {
         //Debug.Log("PlayerListItems.Count: "+PlayerListItems.Count+"\n"+"Manager.GamePlayers.Count: "+Manager.GamePlayers.Count);
         if(!PlayerItemCreated) {
-            CreateHostPlayerItem(); //Host 
+            CreateHostPlayerItem(); //Host
+            return; 
         } 
         if(PlayerListItems.Count < Manager.GamePlayers.Count) { //May need 'manager'
             CreateClientPlayerItem();
@@ -158,7 +157,6 @@ public class LobbyController : MonoBehaviour
                 if(PlayerListItemScript.ConnectionID==player.ConnectionID) {
                     PlayerListItemScript.PlayerName=player.PlayerName;
                     PlayerListItemScript.Ready=player.Ready;
-                    Debug.Log(player.Ready.ToString());
                     PlayerListItemScript.SetPlayerValues();
                     if(player==LocalPlayerController) {
                         UpdateButton();

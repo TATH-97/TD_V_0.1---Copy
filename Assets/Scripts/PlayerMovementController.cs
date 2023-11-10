@@ -1,14 +1,13 @@
 using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
-using Unity.Mathematics;
+using Mirror.SimpleWeb;
 
 public class PlayerMovementController : NetworkBehaviour
 {
     public float moveSpeed= 0.1f;
     public GameObject PlayerModel;
     public Rigidbody2D rb;
-    //public GameObject selectedSpawner;
     private bool changed=false;
     private PlayerObjectController parent;
     public DefenderRuleset rulesD;
@@ -25,14 +24,22 @@ public class PlayerMovementController : NetworkBehaviour
             if(isOwned) {
                 //**********Setup**********
                 if(!changed) {//only happens at start
-                    GameObject.Find("DefenderUI").SetActive(parent.isDefender);
-                    GameObject.Find("AttackerUI").SetActive(!parent.isDefender);
+                    if(!NetworkClient.ready) {
+                        Debug.Log("Not ready");
+                        return;
+                    }
+                    if(GameObject.FindWithTag("DefenderUI")) {
+                        GameObject.FindWithTag("DefenderUI").SetActive(parent.isDefender);
+                    }
+                    if(GameObject.FindWithTag("AttackerUI")) {
+                        GameObject.FindWithTag("AttackerUI").SetActive(!parent.isDefender);
+                    }
+                    // if (sceneScript.readyStatus != 1)
                     //activate ruleSet for each player
                     if(parent.isDefender) {
                         rulesD=GetComponentInParent<DefenderRuleset>();
                         rulesD.Inst();
                         Destroy(this.GetComponentInParent<AttackerRuleSet>());
-                        gameObject.layer=9;
                     } else {
                         //Attacker rules
                         rulesA=GetComponentInParent<AttackerRuleSet>();
@@ -69,7 +76,6 @@ public class PlayerMovementController : NetworkBehaviour
     }
 
     public void SetPosition() {
-        //transform.position=selectedSpawner.transform.position;
         transform.position=new Vector3(-49f, 20.5f, 0.0f);
     }
 }

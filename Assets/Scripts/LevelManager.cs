@@ -6,37 +6,38 @@ using UnityEngine.Events;
 using Unity.Mathematics;
 using UnityEngine.UI;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : NetworkBehaviour
 {
    public static LevelManager instance;
    [SerializeField] public GameObject[] spawnablePrefabs; //used for server overrides, allows server to spawn what is in this
-   [SerializeField] private GameObject[] spawners; //Array of spawn locations
+   [SerializeField] public GameObject[] spawners; //Array of spawn locations
    [SerializeField] private GameObject[] spawnees; // array of spawnable minions
-
    [SerializeField] public GridLayout gameBoard; //The hexboard
-   [SerializeField] public GameObject spire; //minion destenation
+   [SyncVar] [SerializeField] public GameObject spire; //minion destenation
 
     [SerializeField] private int baseCount=12;
     [SerializeField] private float scalingFactor=.75f;
     [SerializeField] private Button startWaveButton;
     private ArrayList spawnLocations = new ArrayList(); 
     private float minionsPerSecond=1f;  
-    private float timeBetweenWaves=60f; //update
-    private int waveCount=0;
-    private float lastSpawnTime=0f;  
-    private float lastWaveTime=0;
-    private int minionsLeftToSpawn;  
-    public bool isSpawning=false; 
+    [SyncVar] public float timeBetweenWaves=10f; //update
+    [SyncVar] private int waveCount=0;
+    private float lastSpawnTime=0f; 
+    [SyncVar] public float lastWaveTime=0;
+    private int minionsLeftToSpawn; 
+    [SyncVar] public bool isSpawning=false; 
     private int minionsPerSource=0;
     private int remainder; 
     private int idex=0;
     private int minionsToKill=0;
     private int minionsKilled=0;
+    private float roundTime=0f;
 
     public static UnityEvent onMinionKilled = new UnityEvent();
-    [SerializeField] public Text displayTimer;
-    [SerializeField] public Text roundCounter;
-
+    [SerializeField] public Text displayTimerD;
+    [SerializeField] public Text roundCounterD;
+    [SerializeField] public Text displayTimerA;
+    [SerializeField] public Text roundCounterA;
 
    private void Awake() {
         if(instance==null) {
@@ -46,14 +47,14 @@ public class LevelManager : MonoBehaviour
         foreach(GameObject gm in spawners) {
             spawnLocations.Add(gm.GetComponent<Transform>());
         }
-        roundCounter.text=waveCount.ToString();
+        SetCounters();
     }
 
     private void Update() { 
         if(isSpawning) {
-            TimeConversion(0f);
-            lastSpawnTime+=Time.deltaTime;
-            if(lastSpawnTime>=1f/minionsPerSecond && minionsPerSource>0) {
+            TimeConversion(roundTime);
+            lastSpawnTime+=Time.deltaTime;  
+            if(lastSpawnTime>=1f/minionsPerSecond &&minionsPerSource>0) {
                 foreach(Transform trans in spawnLocations) {
                     cmdSpawn(trans.position, Quaternion.identity);
                 }
@@ -73,13 +74,19 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    // [ClientRpc]
+    private void SetCounters() {
+        roundCounterD.text=waveCount.ToString();
+        roundCounterA.text=waveCount.ToString();
+    }
+
     private void MinionDestroyed() {
         minionsKilled++;
     }
 
     public void StartWave() {
         startWaveButton.interactable=false;
-        
+        roundTime+=Time.deltaTime;
         Debug.Log("StartWave");
         waveCount++;
         minionsLeftToSpawn=minionsPerWave();
@@ -91,13 +98,15 @@ public class LevelManager : MonoBehaviour
         }
         minionsToKill=minionsPerSource*spawners.Length;
         Debug.Log("MinionsToKill: "+minionsToKill);
-        roundCounter.text=waveCount.ToString();
+        roundCounterD.text=waveCount.ToString();
+        roundCounterA.text=waveCount.ToString();
         minionsKilled=0;
     }
 
     private void EndWave() {
         Debug.Log("End Wave");
         Debug.Log("MinionsKilled: "+minionsKilled);
+        roundTime=0f;
         BuildManager.instance.currency+=Mathf.RoundToInt((float)(100*math.pow(waveCount, scalingFactor)));
         isSpawning=false;
         lastWaveTime=0f;
@@ -109,6 +118,9 @@ public class LevelManager : MonoBehaviour
     }
 
     void cmdSpawn(Vector3 pos, Quaternion rot) {
+        if(!isServer) {
+            return;
+        }
         GameObject newBorn=Instantiate(spawnees[idex]);
         BasicMinionMovement move =newBorn.GetComponent<BasicMinionMovement>();
         move.setTarget(spire.transform);
@@ -120,9 +132,11 @@ public class LevelManager : MonoBehaviour
         return spawnablePrefabs;
     }
 
+    // [ClientRpc] 
     private void TimeConversion(float inputTime) {
         float minutes = Mathf.FloorToInt(inputTime / 60);  
         float seconds = Mathf.FloorToInt(inputTime % 60);
-        displayTimer.text=string.Format("{0:00}:{1:00}", minutes, seconds);
+        displayTimerD.text=string.Format("{0:00}:{1:00}", minutes, seconds);
+        displayTimerA.text=string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 }

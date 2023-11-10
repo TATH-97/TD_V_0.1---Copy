@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - AttackerUI
+  - DefenderUI
+  - Citadel
   layers:
   - Default
   - TransparentFX
@@ -43,4 +46,7 @@ TagManager:
     locked: 0
   - name: MovingPieces
     uniqueID: 2698887479
+    locked: 0
+  - name: UI
+    uniqueID: 4124518567
     locked: 0

@@ -20,7 +20,7 @@ public class PlayerListItem : MonoBehaviour
 
     public void Start() {
         ImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnImageLoaded);
-        //PlayerNameText.text=PlayerName;
+        PlayerNameText.text=PlayerName;
     } 
 
     public void SetPlayerValues() {
@@ -29,7 +29,6 @@ public class PlayerListItem : MonoBehaviour
         }
         ChangeReadyStatus();
         PlayerNameText.text=PlayerName;
-        Debug.Log(PlayerName);
     }
 
 
@@ -69,7 +68,6 @@ public class PlayerListItem : MonoBehaviour
     }
 
     public void ChangeReadyStatus() {
-        Debug.Log("ChangeReadyStatus");
         if(Ready) { //ready
             PlayerReadyText.text="Ready";
             PlayerReadyText.color=Color.green;

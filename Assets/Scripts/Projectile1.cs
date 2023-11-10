@@ -19,10 +19,6 @@ public class Projectile1 : MonoBehaviour
         home=Home.position;
     }
 
-    // public void SetParent(GameObject p) {
-    //     parent=p;
-    // }
-
     private void FixedUpdate() {
         if(target==null) {
             // Debug.Log("POP");
