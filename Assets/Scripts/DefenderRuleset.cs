@@ -34,12 +34,12 @@ public class DefenderRuleset : NetworkBehaviour
         Collider2D[] col = Physics2D.OverlapPointAll(worldPosition);
         if(col.Length > 0){
             foreach(Collider2D c in col) {
-                if(c.GetComponent<Collider2D>().gameObject.layer!=0) { //need to account for drone and ghosts
+                if(c.GetComponent<Collider2D>().gameObject.layer!=0 && c.GetComponent<Collider2D>().gameObject.layer!=9) {
                     canBuild=false;
                 }
             }
             if(canBuild) {
-                CmdBuild(GetCellPos(worldPosition));
+                Build(GetCellPos(worldPosition));
             } 
         }
     }   
@@ -69,8 +69,7 @@ public class DefenderRuleset : NetworkBehaviour
         CmdBuild(pos);    
     } 
 
-    [Command(requiresAuthority =false)]
-    private void CmdBuild(Vector3 pos) {
+    [Command(requiresAuthority =false)] private void CmdBuild(Vector3 pos) {
         Debug.Log("CmdBuild");
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
         if(towerToBuild==null) {
