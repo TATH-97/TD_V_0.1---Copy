@@ -52,13 +52,13 @@ public class BasicTower : NetworkBehaviour
     private void FindTarget() {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, maxRange, (UnityEngine.Vector2)transform.position, 0f, enemyMask);
         if(hits.Length>0) {
-            CMDUpdateTarget(hits[0].transform);
-            // target=hits[0].transform;
+            CMDUpdateTarget(hits[0].transform.gameObject);
+            target=hits[0].transform;
         }
     }
 
-    [Command(requiresAuthority =false)] private void CMDUpdateTarget(Transform _target) {
-        target=_target;
+    [Command(requiresAuthority =false)] private void CMDUpdateTarget(GameObject _target) {
+        target=_target.transform;
     }
 
     private bool ChecktargetIsInRange() {

@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Mirror;
-using System.Collections.Generic;
-using System.Collections;
 
 public class BasicMinionMovement : NetworkBehaviour
 {
@@ -40,6 +38,9 @@ public class BasicMinionMovement : NetworkBehaviour
 
     void OnCollisionStay2D(Collision2D other) {
         GameObject go=other.gameObject;
+        if(go.layer!=8) {
+            return;
+        }
         if(go.layer==8) {
             ItemHealth H=go.GetComponent<ItemHealth>();
             if(timeSenseLastAttack>=timeToAttack) {
@@ -48,5 +49,20 @@ public class BasicMinionMovement : NetworkBehaviour
             }
             timeSenseLastAttack+=Time.deltaTime;
         }
+    }
+
+    [Command(requiresAuthority =false)] public void CMDJoinParty(Transform newTarget) {
+        setTarget(newTarget);
+        CMDChangeLayer(10);
+    }
+
+    [Command(requiresAuthority =false)] public void CMDChangeLayer(int layer) {
+        gameObject.layer=layer;
+        RPCChangeLayer(layer);
+    }
+
+    [ClientRpc] private void RPCChangeLayer(int layer) {
+        if(isLocalPlayer) {return;}
+        gameObject.layer=layer;
     }
 }

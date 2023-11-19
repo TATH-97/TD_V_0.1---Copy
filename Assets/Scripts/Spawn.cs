@@ -1,7 +1,5 @@
-using System.Threading;
 using UnityEngine;
 using Mirror;
-using System;
 using System.Collections;
 
 public class Spawn : MonoBehaviour {

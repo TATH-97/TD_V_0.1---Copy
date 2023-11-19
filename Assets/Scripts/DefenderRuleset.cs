@@ -4,23 +4,21 @@ using Mirror;
 public class DefenderRuleset : NetworkBehaviour
 {
     private GridLayout board;
+    [SerializeField] private float FOV; 
     [SerializeField] private SpriteRenderer sr;
-    // private Color col=new Color(0.57f, 0.5f, 0.5f, 1); 
+    [SerializeField] public GameObject spottingSystem;
+    public float moveSpeed= 0.075f;
 
     public void Inst() {
         board=LevelManager.instance.gameBoard;
         SetDrone();
+        GameObject temp=GameObject.FindGameObjectWithTag("Vision"); //may need to synch over server
+        temp.transform.localScale=new Vector3(8f, 8f, 1f);
+        LevelManager.instance.SetFOW();  
     }
 
-//     IEnumerator WaitForReady() {
-//     while (!connectionToClient.isReady) {
-//         yield return new WaitForSeconds(0.25f);
-//     }
-//     board=LevelManager.instance.gameBoard;
-//     SetDrone();
-// }
-
     public void Actions() {
+        Movement();
         if(Input.GetMouseButton(0)) {
             ScreenMouseRay();
         }
@@ -28,18 +26,33 @@ public class DefenderRuleset : NetworkBehaviour
 
     public void ScreenMouseRay() {
         bool canBuild=true;
+        bool isSpawning=LevelManager.instance.isSpawning;
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = 5f;
         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
         Collider2D[] col = Physics2D.OverlapPointAll(worldPosition);
-        if(col.Length > 0){
-            foreach(Collider2D c in col) {
-                if(c.GetComponent<Collider2D>().gameObject.layer!=0 && c.GetComponent<Collider2D>().gameObject.layer!=9) {
-                    canBuild=false;
+        if(col.Length > 0){//if we clicked on something
+            if(!isSpawning) { //if is in round, no need to check vision
+                foreach(Collider2D c in col) {
+                    if(c.GetComponent<Collider2D>().gameObject.layer!=0 && c.GetComponent<Collider2D>().gameObject.layer!=9) {
+                        canBuild=false;
+                        break;
+                    }
+                }
+            } else {//if in round, need to check if we have vision
+                canBuild=false;
+                foreach(Collider2D c in col) {
+                    if(c.gameObject.tag=="Vision") {
+                        canBuild=true;
+                    }
+                    if(c.GetComponent<Collider2D>().gameObject.layer==6 || c.GetComponent<Collider2D>().gameObject.layer==8) {
+                        canBuild=false;
+                        break;
+                    }
                 }
             }
             if(canBuild) {
-                Build(GetCellPos(worldPosition));
+                CmdBuild(GetCellPos(worldPosition));
             } 
         }
     }   
@@ -49,7 +62,7 @@ public class DefenderRuleset : NetworkBehaviour
         return board.CellToWorld(gridPosition);
     }
 
-    //*******************BUILD*******************
+    //*******************BUILD*******************\\
     private void BuildGen(Vector3 pos) {
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
         if(towerToBuild==null) {
@@ -74,25 +87,21 @@ public class DefenderRuleset : NetworkBehaviour
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
         if(towerToBuild==null) {
             return;
-        }
-        if(towerToBuild.cost<=BuildManager.instance.currency) {
-            GameObject tower=Instantiate(towerToBuild.prefab);
-            tower.transform.SetPositionAndRotation(pos, Quaternion.identity);
-            NetworkServer.Spawn(tower);
-            // RPCSpawnTower(pos);
-            BuildManager.instance.currency-=towerToBuild.cost;
-        } else {
-            Debug.Log("Your broke");
-        }
+        }     
+        GameObject tower=Instantiate(towerToBuild.prefab);
+        tower.transform.SetPositionAndRotation(pos, Quaternion.identity);
+        NetworkServer.Spawn(tower);
+        // RPCSpawnTower(pos);
+        BuildManager.instance.currency-=towerToBuild.cost;      
     }
 
     [ClientRpc] private void RPCSpawnTower(Vector3 pos) {
         Debug.Log("RPCSpawnTower");
         BuildGen(pos);
     }
-    //*******************BUILD*******************
+    //*******************BUILD*******************\\
 
-    //*******************DRONE*********************
+    //*******************DRONE*********************\\
     private void DroneGen() {
         sr.color= new Color(0.57f, 0.5f, 0.5f, 1); 
         gameObject.layer=9;
@@ -100,13 +109,11 @@ public class DefenderRuleset : NetworkBehaviour
 
     [Client] private void SetDrone() {
         if(!isLocalPlayer) return;
-        Debug.Log("SetDrone");
         DroneGen();
         CMDSetDrone();
     }
 
     [Command] private void CMDSetDrone() {
-        Debug.Log("CMDSetDrone");
         DroneGen();
         RPCSetDrone();
     }
@@ -115,8 +122,15 @@ public class DefenderRuleset : NetworkBehaviour
         if(isLocalPlayer) {
             return;
         }
-        Debug.Log("RPCSetDrone");
         DroneGen();
     }
-    //*******************DRONE*********************
+    //*******************DRONE*********************\\
+
+
+    public void Movement() {
+        float xDirection=Input.GetAxis("Horizontal"); 
+        float yDirection= Input.GetAxis("Vertical");
+        Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
+        transform.position += moveDirection * moveSpeed;
+    }
 }

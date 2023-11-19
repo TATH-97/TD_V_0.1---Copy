@@ -16,7 +16,7 @@ public class CustomNetworkManager : NetworkManager
             GamePlayerInstance.ConnectionID=conn.connectionId;
             GamePlayerInstance.PlayerIDNumber = GamePlayers.Count +1;
             GamePlayerInstance.PlayerSteamID=(ulong)SteamMatchmaking.GetLobbyMemberByIndex((CSteamID)SteamLobby.Instance.CurrentLobbyID, GamePlayers.Count);
-
+            // sGamePlayerInstance.networkConnectionToClient=conn;
             NetworkServer.AddPlayerForConnection(conn, GamePlayerInstance.gameObject);
         }
 

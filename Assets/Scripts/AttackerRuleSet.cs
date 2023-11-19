@@ -3,33 +3,43 @@ using Mirror;
 
 public class AttackerRuleSet : NetworkBehaviour
 {
-    [SerializeField] public GameObject[] items;
     public bool[] abilitiesActive; //used for switching abilities on and off
     [SerializeField] int damage=20; //may not need, maybe apply to weapon
-    [SerializeField] public GameObject weapon;
     [SerializeField] private SpriteRenderer sr;
+    [SerializeField] private GameObject spottingSystemPrefab;
+    // [SerializeField] private GameObject grabMinions;
     [SyncVar] private Color col=new Color(1,0,0,1);
     private float timeToAttack=1.5f;
     private float timeSenseLastAttack=1.5f;
     public bool isDead=false;
     private bool changed=false;
+    public float moveSpeed= 0.1f;
     public Transform home; //default
+    private SpriteMask mask; 
+    // private GameObject minionGrabber;
+
+    public void Inst() {
+        CLFogOfWarGen();
+        LevelManager.instance.SetFOW();
+        // minionGrabber=Instantiate(grabMinions);
+    }
 
     public void Actions() {
+        Movement();
         if(!LevelManager.instance.isSpawning) { //if not in a round
-            if(LevelManager.instance.timeBetweenWaves-LevelManager.instance.lastWaveTime<=1f) { //about to start round
+            if(LevelManager.instance.timeBetweenWaves-LevelManager.instance.lastWaveTime<=1.5f) { //about to start round
                 if(!home) {
                     home=LevelManager.instance.spawners[0].transform;    
                 }
                 gameObject.transform.position=home.position;
                 Respawn();
-                // if(isDead) { //if died during last round
-                //     CMDPlayerRespawn();
-                // }
             }
 
             if(Input.GetMouseButton(0)) {
                 ScreenMouseRay();
+            }
+            if(Input.GetKeyDown(KeyCode.Alpha1)) {
+                
             }
         } 
         
@@ -40,7 +50,7 @@ public class AttackerRuleSet : NetworkBehaviour
         }
     }
 
-    //**************DEATH*******************
+    //**************DEATH*******************\\
     private void DeathGen() {
         changed=true;
         gameObject.layer=9;
@@ -63,10 +73,42 @@ public class AttackerRuleSet : NetworkBehaviour
         if(isLocalPlayer) return;
         DeathGen();
     }
-    //**************DEATH*******************
+    //**************DEATH*******************\\
 
 
-    //*************RESPAWN*************
+    //******************FogOfWar******************\\
+    private void FogOfWarGen() {
+        // GameObject temp=GameObject.FindWithTag("Vision");
+        // mask=temp.GetComponent<SpriteMask>();
+        mask=gameObject.GetComponentInChildren<SpriteMask>();
+        mask.frontSortingOrder=0;
+        GameObject maskA=Instantiate(spottingSystemPrefab);
+        maskA.transform.parent=gameObject.transform;
+        maskA.transform.position=gameObject.transform.position;
+    }
+
+    [Client] private void CLFogOfWarGen() {
+        if(!isLocalPlayer) return;
+        Debug.Log("CLFogOfWarGen");
+        FogOfWarGen();
+        CMDFogOfWar(); 
+    }
+
+    [Command] private void CMDFogOfWar() {
+        Debug.Log("CMDFogOfWar");
+        FogOfWarGen();
+        RPCFogOfWar();
+    }
+
+    [ClientRpc] private void RPCFogOfWar() {
+        if(isLocalPlayer) return;
+        Debug.Log("RPCFogOfWar");
+        FogOfWarGen();
+    }
+    //******************FogOfWar******************\\
+
+    
+    //******************RESPAWN******************\\
     private void RespawnGen() {
         isDead=false;
         changed=false;
@@ -76,7 +118,6 @@ public class AttackerRuleSet : NetworkBehaviour
         ItemHealth h =GetComponentInParent<ItemHealth>();
         h.ResetHealth();
     }
-    
     [Client] private void Respawn() { //called by local player to respawn.
         if(!isLocalPlayer) return;
         RespawnGen();
@@ -94,7 +135,7 @@ public class AttackerRuleSet : NetworkBehaviour
         }
         RespawnGen();
     }
-    //*************RESPAWN*************
+    //******************RESPAWN******************\\
 
 
     void OnCollisionStay2D(Collision2D other) {
@@ -126,5 +167,12 @@ public class AttackerRuleSet : NetworkBehaviour
                 }
             }
         }
+    }
+
+    public void Movement() {
+        float xDirection=Input.GetAxis("Horizontal"); 
+        float yDirection= Input.GetAxis("Vertical");
+        Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
+        transform.position += moveDirection * moveSpeed;
     }
 }

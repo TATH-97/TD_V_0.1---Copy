@@ -1,5 +1,4 @@
 using Mirror;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemHealth : NetworkBehaviour  
@@ -33,12 +32,18 @@ public class ItemHealth : NetworkBehaviour
             if(GameObject.FindWithTag("Citadel")) {
                 Debug.Log("EndGame");
             } else {
-                NetworkServer.Destroy(gameObject);
-                // Destroy(gameObject);
+                if(isServer) {
+                    NetworkServer.Destroy(gameObject);
+                } else {
+                    ClientDestroy();
+                }
             }
-            // manager.DestroyBldg(gameObject); //maybe need for networking?
         }
     }
+
+    [Command(requiresAuthority =false)] private void ClientDestroy() {
+        NetworkServer.Destroy(gameObject);
+    } 
 
     public void AddHealth(int more) {
         health+=more;

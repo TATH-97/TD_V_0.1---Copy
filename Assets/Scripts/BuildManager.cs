@@ -4,8 +4,8 @@ using Mirror;
 public class BuildManager : NetworkBehaviour
 {
     public static BuildManager instance;
-    private bool armed=false;
-    private bool wallArmed=false;
+    public bool armed=false;
+    public bool wallArmed=false;
 
     // [SerializeField] private GameObject[] buildingPrefabs;
     [SerializeField] private Tower[] buildingPrefabs;
@@ -13,16 +13,24 @@ public class BuildManager : NetworkBehaviour
     private int selectedTower=0;
     public Tower GetSelectedTower() {
         if(selectedTower==0 && wallArmed) {
+            if(buildingPrefabs[selectedTower].cost>currency) {
+                Debug.Log("Your broke!");
+                return null;
+            }
+            // Cursor.SetCursor(buildingPrefabs[selectedTower].spriteRenderer.sprite, Vector2.zero, CursorMode.ForceSoftware);
             return buildingPrefabs[selectedTower];
         }
         if(armed && selectedTower!=0) {
+            if(buildingPrefabs[selectedTower].cost>currency) {
+                Debug.Log("Your broke!");
+                return null;
+            }
             wallArmed=false;
             armed=false;
             return buildingPrefabs[selectedTower];
         } else {
             return null;
-        }
-        
+        }      
     }
 
     public Tower[] GetPrefabs() {

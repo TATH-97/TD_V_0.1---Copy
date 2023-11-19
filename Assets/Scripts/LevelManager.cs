@@ -18,9 +18,10 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] private int baseCount=12;
     [SerializeField] private float scalingFactor=.75f;
     [SerializeField] private Button startWaveButton;
+    // [SerializeField] public GameObject fogOfWar;
     private ArrayList spawnLocations = new ArrayList(); 
-    private float minionsPerSecond=1f;  
-    [SyncVar] public float timeBetweenWaves=10f; //update
+    private float minionsPerSecond=.5f;  
+    public float timeBetweenWaves=10f; //update
     [SyncVar] private int waveCount=0;
     private float lastSpawnTime=0f; 
     [SyncVar] public float lastWaveTime=0;
@@ -38,6 +39,8 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] public Text roundCounterD;
     [SerializeField] public Text displayTimerA;
     [SerializeField] public Text roundCounterA;
+    public GameObject fogOfWarInstance; 
+
 
    private void Awake() {
         if(instance==null) {
@@ -50,9 +53,15 @@ public class LevelManager : NetworkBehaviour
         SetCounters();
     }
 
+    public void SetFOW() {
+        fogOfWarInstance=GameObject.FindWithTag("FogOfWarTag");
+        fogOfWarInstance.SetActive(false);
+    }
+
     private void Update() { 
         if(isSpawning) {
             TimeConversion(roundTime);
+            roundTime+=Time.deltaTime;
             lastSpawnTime+=Time.deltaTime;  
             if(lastSpawnTime>=1f/minionsPerSecond &&minionsPerSource>0) {
                 foreach(Transform trans in spawnLocations) {
@@ -61,7 +70,7 @@ public class LevelManager : NetworkBehaviour
                 minionsPerSource--;
             }
             if(minionsToKill-minionsKilled<=0) {
-                EndWave();
+                EndWaveCL();
             }
         }
 
@@ -69,7 +78,7 @@ public class LevelManager : NetworkBehaviour
             lastWaveTime+=Time.deltaTime;
             TimeConversion(timeBetweenWaves-lastWaveTime);
             if(lastWaveTime>=timeBetweenWaves && minionsToKill-minionsKilled<=0) {
-                StartWave();
+                StartWaveCL();
             }
         }
     }
@@ -84,6 +93,7 @@ public class LevelManager : NetworkBehaviour
         minionsKilled++;
     }
 
+//***************START WAVE NETCODE***************\\
     public void StartWave() {
         startWaveButton.interactable=false;
         roundTime+=Time.deltaTime;
@@ -91,6 +101,9 @@ public class LevelManager : NetworkBehaviour
         waveCount++;
         minionsLeftToSpawn=minionsPerWave();
         isSpawning=true;
+        fogOfWarInstance.SetActive(true);
+        lastWaveTime=timeBetweenWaves-.5f;
+        
         minionsPerSource=minionsLeftToSpawn/spawners.Length;
         remainder=minionsLeftToSpawn%spawners.Length;
         if(remainder>=(.5*spawners.Length)) {
@@ -103,27 +116,89 @@ public class LevelManager : NetworkBehaviour
         minionsKilled=0;
     }
 
+    [Client] public void StartWaveCL() {
+        Debug.Log("Start");
+        if(!isClientOnly) {
+            Debug.Log("Local Call, start, !isClientOnly");
+            CMDStartWave();
+            return;
+        } else {
+            Debug.Log("Local Call, start");
+            StartWave();
+            CMDStartWave();
+        }
+    }
+
+    [Command(requiresAuthority =false)] public void CMDStartWave() {
+        Debug.Log("Command call, start");
+        StartWave();
+        RPCStartWave();
+    }
+
+    [ClientRpc] private void RPCStartWave() {
+        if(!isClientOnly) {
+            Debug.Log("Client call, escape");
+            return;
+        }
+        Debug.Log("Client call, start");
+        StartWave();
+    }
+//***************START WAVE NETCODE***************\\
+
+
+
+//***************END WAVE NETCODE***************\\
     private void EndWave() {
         Debug.Log("End Wave");
         Debug.Log("MinionsKilled: "+minionsKilled);
         roundTime=0f;
         BuildManager.instance.currency+=Mathf.RoundToInt((float)(100*math.pow(waveCount, scalingFactor)));
         isSpawning=false;
+        fogOfWarInstance.SetActive(false);
         lastWaveTime=0f;
         startWaveButton.interactable=true;
     }
+
+    [Client] public void EndWaveCL() {
+        if(!isClientOnly) {
+            CMDEndWave();
+            return;
+        } else {
+            Debug.Log("Local Call, end");
+            EndWave();
+            CMDEndWave();
+            return;
+        }
+    }
+
+    [Command(requiresAuthority =false)] public void CMDEndWave() {
+        Debug.Log("Server Call, end");
+        EndWave();
+        RPCEndWave();
+    }
+
+    [ClientRpc] private void RPCEndWave() {
+        if(!isClientOnly) {
+            return;
+        }
+        Debug.Log("Client Call, end");
+        EndWave();
+    }
+
+//***************END WAVE NETCODE***************\\
 
     private int minionsPerWave() {
         return Mathf.RoundToInt((float)(baseCount *Math.Pow(waveCount, scalingFactor)));
     }
 
     void cmdSpawn(Vector3 pos, Quaternion rot) {
-        if(!isServer) {
+        if(!isServer) {//minions only on server
             return;
         }
         GameObject newBorn=Instantiate(spawnees[idex]);
         BasicMinionMovement move =newBorn.GetComponent<BasicMinionMovement>();
         move.setTarget(spire.transform);
+        move.targetGameobject=spire;
         newBorn.transform.SetPositionAndRotation(pos, rot);
         NetworkServer.Spawn(newBorn);
     }
@@ -132,7 +207,6 @@ public class LevelManager : NetworkBehaviour
         return spawnablePrefabs;
     }
 
-    // [ClientRpc] 
     private void TimeConversion(float inputTime) {
         float minutes = Mathf.FloorToInt(inputTime / 60);  
         float seconds = Mathf.FloorToInt(inputTime % 60);

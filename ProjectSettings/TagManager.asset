@@ -7,6 +7,9 @@ TagManager:
   - AttackerUI
   - DefenderUI
   - Citadel
+  - Vision
+  - FogOfWarTag
+  - AttackerVision
   layers:
   - Default
   - TransparentFX
@@ -18,7 +21,7 @@ TagManager:
   - Projectiles
   - Walls
   - Drone
-  - 
+  - MinionFollowers
   - 
   - 
   - 
@@ -46,6 +49,12 @@ TagManager:
     locked: 0
   - name: MovingPieces
     uniqueID: 2698887479
+    locked: 0
+  - name: DefenderFog
+    uniqueID: 3412007411
+    locked: 0
+  - name: AttackerFog
+    uniqueID: 1452574307
     locked: 0
   - name: UI
     uniqueID: 4124518567

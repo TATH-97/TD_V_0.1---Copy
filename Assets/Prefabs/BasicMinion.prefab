@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0.02264148, b: 0.02264148, a: 1}
+  m_Color: {r: 0.9150943, g: 0.85811675, b: 0.8984256, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   syncInterval: 0
   targetGameobject: {fileID: 2698056253522369948, guid: 211236978e3659044b1ef6ca08be752d, type: 3}
   target: {fileID: 0}
-  rb: {fileID: 3587943186575323313}
+  rb: {fileID: 0}
   damage: 5
   timeToAttack: 1.5
   timeSenseLastAttack: 1.5

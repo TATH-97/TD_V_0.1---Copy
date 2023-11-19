@@ -1,17 +1,26 @@
 using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
-using Mirror.SimpleWeb;
 
 public class PlayerMovementController : NetworkBehaviour
 {
-    public float moveSpeed= 0.1f;
     public GameObject PlayerModel;
     public Rigidbody2D rb;
     private bool changed=false;
     private PlayerObjectController parent;
     public DefenderRuleset rulesD;
     public AttackerRuleSet rulesA;
+
+    private CustomNetworkManager manager;
+    private CustomNetworkManager Manager {
+        get {
+            if(manager!=null) {
+                return manager;
+            } else {
+                return manager=CustomNetworkManager.singleton as CustomNetworkManager; 
+            }
+        }
+    }
 
     private void Start() {
         PlayerModel.SetActive(true);
@@ -27,28 +36,34 @@ public class PlayerMovementController : NetworkBehaviour
                     if(!NetworkClient.ready) {
                         Debug.Log("Not ready");
                         return;
-                    }
+                    }          
+                    // foreach(PlayerObjectController player in Manager.GamePlayers) { //check all players ready
+                    //     if(!player.networkConnectionToClient.isReady) {
+                    //         Debug.Log("Client not ready");
+                    //         return;
+                    //     }
+                    // }
                     if(GameObject.FindWithTag("DefenderUI")) {
                         GameObject.FindWithTag("DefenderUI").SetActive(parent.isDefender);
                     }
                     if(GameObject.FindWithTag("AttackerUI")) {
                         GameObject.FindWithTag("AttackerUI").SetActive(!parent.isDefender);
                     }
-                    // if (sceneScript.readyStatus != 1)
                     //activate ruleSet for each player
                     if(parent.isDefender) {
                         rulesD=GetComponentInParent<DefenderRuleset>();
                         rulesD.Inst();
-                        Destroy(this.GetComponentInParent<AttackerRuleSet>());
+                        Destroy(this.GetComponentInParent<AttackerRuleSet>()); //what happens if we play another game?
                     } else {
                         //Attacker rules
                         rulesA=GetComponentInParent<AttackerRuleSet>();
+                        rulesA.Inst();
                         Destroy(this.GetComponentInParent<DefenderRuleset>());
                     }
                     changed=true;
                 }
                 //**********Setup**********
-                Movement(); //Need to move to specific attacker/defender scripts
+                // Movement(); //Need to move to specific attacker/defender scripts
                 if(parent.isDefender) {
                     DefenderStuff();
                 } else {
@@ -56,13 +71,6 @@ public class PlayerMovementController : NetworkBehaviour
                 }
             }        
         }
-    }
-
-    public void Movement() {
-        float xDirection=Input.GetAxis("Horizontal"); 
-        float yDirection= Input.GetAxis("Vertical");
-        Vector3 moveDirection =new Vector3(xDirection, yDirection, 0.0f);
-        transform.position += moveDirection * moveSpeed;
     }
 
     //Attacker RuleSet
