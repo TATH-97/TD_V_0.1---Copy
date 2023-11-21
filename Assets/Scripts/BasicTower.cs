@@ -46,18 +46,21 @@ public class BasicTower : NetworkBehaviour
         Projectile1 bulletScript = bullet.GetComponent<Projectile1>();
         bulletScript.SetTarget(target); 
         bulletScript.SetHome(transform);
-        // NetworkServer.Spawn(bullet);
     }
 
     private void FindTarget() {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, maxRange, (UnityEngine.Vector2)transform.position, 0f, enemyMask);
         if(hits.Length>0) {
             CMDUpdateTarget(hits[0].transform.gameObject);
-            target=hits[0].transform;
+            // target=hits[0].transform;
         }
     }
 
     [Command(requiresAuthority =false)] private void CMDUpdateTarget(GameObject _target) {
+        if(!_target) {
+            target=null;
+            return;
+        }
         target=_target.transform;
     }
 

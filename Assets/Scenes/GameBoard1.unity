@@ -803,17 +803,21 @@ MonoBehaviour:
   - {fileID: 3587943186575323321, guid: 8d91ece828bfdd94195d59dd72f7decb, type: 3}
   gameBoard: {fileID: 831506005}
   spire: {fileID: 2698056254270247420}
+  fogOfWarInstance: {fileID: 0}
   baseCount: 12
   scalingFactor: 0.75
-  startWaveButton: {fileID: 1479950561}
-  timeBetweenWaves: 30
-  lastWaveTime: 0
   isSpawning: 0
+  roundTime: 0
+  GenSetUpTime: 30
+  totalRoundTime: 90
+  timeBetweenWaves: 90
+  lastWaveTime: 0
+  minionsSpawned: []
+  startWaveButton: {fileID: 1479950561}
   displayTimerD: {fileID: 200431290}
   roundCounterD: {fileID: 1988966717}
   displayTimerA: {fileID: 870270091}
   roundCounterA: {fileID: 1319909431}
-  fogOfWarInstance: {fileID: 0}
 --- !u!114 &402540203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108608,11 +108612,11 @@ MonoBehaviour:
     prefab: {fileID: 6743348904292647505, guid: 4b75a6496c6977a4ba7947b8c24ed128, type: 3}
     name: Basic Turret
     spriteRenderer: {fileID: 0}
-  - cost: 150
+  - cost: 80
     prefab: {fileID: 3622400809316295864, guid: df0c7c129d1bec04e99c0dfadbbf4941, type: 3}
     name: Spotting Tower
     spriteRenderer: {fileID: 0}
-  currency: 500
+  currency: 1000
 --- !u!4 &1761135323
 Transform:
   m_ObjectHideFlags: 0
