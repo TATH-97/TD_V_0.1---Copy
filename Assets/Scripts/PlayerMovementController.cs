@@ -33,16 +33,11 @@ public class PlayerMovementController : NetworkBehaviour
             if(isOwned) {
                 //**********Setup**********
                 if(!changed) {//only happens at start
-                    if(!NetworkClient.ready) {
-                        Debug.Log("Not ready");
-                        return;
-                    }          
-                    // foreach(PlayerObjectController player in Manager.GamePlayers) { //check all players ready
-                    //     if(!player.networkConnectionToClient.isReady) {
-                    //         Debug.Log("Client not ready");
-                    //         return;
-                    //     }
-                    // }
+                    // if(!NetworkClient.ready) {
+                    //     Debug.Log("Not ready");
+                    //     return;
+                    // }          
+                    if (!NetworkClient.ready) NetworkClient.Ready();
                     if(GameObject.FindWithTag("DefenderUI")) {
                         GameObject.FindWithTag("DefenderUI").SetActive(parent.isDefender);
                     }

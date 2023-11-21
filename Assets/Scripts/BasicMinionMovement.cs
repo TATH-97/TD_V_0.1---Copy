@@ -54,6 +54,13 @@ public class BasicMinionMovement : NetworkBehaviour
     [Command(requiresAuthority =false)] public void CMDJoinParty(Transform newTarget) {
         setTarget(newTarget);
         CMDChangeLayer(10);
+        gameObject.GetComponent<NavMeshAgent>().speed=8;
+    }
+
+    [Command(requiresAuthority =false)] public void CMDSetFree() {
+        gameObject.GetComponent<NavMeshAgent>().speed=2;
+        setTarget(targetGameobject.transform);
+        CMDChangeLayer(6);
     }
 
     [Command(requiresAuthority =false)] public void CMDChangeLayer(int layer) {

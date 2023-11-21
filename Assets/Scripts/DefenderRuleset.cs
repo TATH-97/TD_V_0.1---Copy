@@ -19,22 +19,46 @@ public class DefenderRuleset : NetworkBehaviour
 
     public void Actions() {
         Movement();
-        if(Input.GetMouseButton(0)) {
-            ScreenMouseRay();
+        if(Input.GetMouseButton(0) && !Input.GetKey(KeyCode.LeftShift)) {
+            BuildCheck(ScreenMouseRay(), ConvertToWorldPos(Input.mousePosition));
+        }
+        if(Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftShift)) {
+            DeleteCheck(ScreenMouseRay());
         }
     }
 
-    public void ScreenMouseRay() {
-        bool canBuild=true;
-        bool isSpawning=LevelManager.instance.isSpawning;
+    private Collider2D[] ScreenMouseRay() {
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = 5f;
         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        Collider2D[] col = Physics2D.OverlapPointAll(worldPosition);
+        return Physics2D.OverlapPointAll(worldPosition);
+    }
+
+    private Vector2 ConvertToWorldPos(Vector3 mousePosition) {
+        mousePosition.z = 5f;
+        return Camera.main.ScreenToWorldPoint(mousePosition);
+    } 
+
+    private void DeleteCheck(Collider2D[] col) {
+        Debug.Log("DeleteCheck");
+        if(col.Length>0) {
+            Debug.Log(">0");
+            foreach(Collider2D c in col) {
+                if(c.gameObject.layer==8 && c.gameObject.tag!="Citadel") {
+                    Debug.Log("PassedCheck");
+                    NetworkServer.Destroy(c.gameObject);
+                }
+            }
+        }
+    }
+
+    private void BuildCheck(Collider2D[] col, Vector2 worldPosition) { //checks a given col array for canbuild
+        bool canBuild=true;
+        bool isSpawning=LevelManager.instance.isSpawning;
         if(col.Length > 0){//if we clicked on something
             if(!isSpawning) { //if is in round, no need to check vision
                 foreach(Collider2D c in col) {
-                    if(c.GetComponent<Collider2D>().gameObject.layer!=0 && c.GetComponent<Collider2D>().gameObject.layer!=9) {
+                    if(c.gameObject.layer!=0 && c.gameObject.layer!=9 && c.gameObject.layer!=7) {
                         canBuild=false;
                         break;
                     }
@@ -45,7 +69,7 @@ public class DefenderRuleset : NetworkBehaviour
                     if(c.gameObject.tag=="Vision") {
                         canBuild=true;
                     }
-                    if(c.GetComponent<Collider2D>().gameObject.layer==6 || c.GetComponent<Collider2D>().gameObject.layer==8) {
+                    if(c.gameObject.layer==6 || c.gameObject.layer==8) {
                         canBuild=false;
                         break;
                     }
@@ -55,7 +79,7 @@ public class DefenderRuleset : NetworkBehaviour
                 CmdBuild(GetCellPos(worldPosition));
             } 
         }
-    }   
+    }  
 
     private Vector3 GetCellPos(Vector3 mousePosition) {
         Vector3Int gridPosition=board.WorldToCell(mousePosition);

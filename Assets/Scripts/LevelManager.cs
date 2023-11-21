@@ -32,7 +32,7 @@ public class LevelManager : NetworkBehaviour
     private int idex=0;
     private int minionsToKill=0;
     private int minionsKilled=0;
-    private float roundTime=0f;
+    public float roundTime=0f;
 
     public static UnityEvent onMinionKilled = new UnityEvent();
     [SerializeField] public Text displayTimerD;

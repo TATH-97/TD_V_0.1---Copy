@@ -8,13 +8,18 @@ public class GetFollowerScript : MonoBehaviour
     public int minionCount=0;
     private int level=1;
     private int levelLimit=2;
-    private float radius=6f;
+    private float radius=6;
     public List<BasicMinionMovement> followers = new();
+    public float coolDownTime=15;
 
     public void GrabFollowers() {
-        Collider2D[] hits=Physics2D.OverlapCircleAll(gameObject.transform.position, radius, 6);
+        if(minionCount>=minionLimit) return;
+        Collider2D[] hits=Physics2D.OverlapCircleAll(gameObject.transform.position, radius, LayerMask.GetMask("Minions"));
+        if(hits.Length==0) {
+            return;
+        }
         foreach(Collider2D col in hits) {
-            GameObject temp =col.gameObject;
+            GameObject temp = col.gameObject;
             if(!temp.GetComponent<NavMeshAgent>()) { //if not a minion
                 continue;
             } else {
@@ -37,8 +42,7 @@ public class GetFollowerScript : MonoBehaviour
         foreach(BasicMinionMovement minion in followers) {
             minionCount--;
             if(!minion) continue; //case where follower died
-            minion.setTarget(minion.targetGameobject.transform);
-            minion.CMDChangeLayer(6);
+            minion.CMDSetFree();
         }
     }
 

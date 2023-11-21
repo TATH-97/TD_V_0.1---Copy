@@ -7,7 +7,6 @@ public class AttackerRuleSet : NetworkBehaviour
     [SerializeField] int damage=20; //may not need, maybe apply to weapon
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private GameObject spottingSystemPrefab;
-    // [SerializeField] private GameObject grabMinions;
     [SyncVar] private Color col=new Color(1,0,0,1);
     private float timeToAttack=1.5f;
     private float timeSenseLastAttack=1.5f;
@@ -17,15 +16,20 @@ public class AttackerRuleSet : NetworkBehaviour
     public Transform home; //default
     private SpriteMask mask; 
     // private GameObject minionGrabber;
+    public float timeSenseGetFollower=15f;
+    private GetFollowerScript minionGrabber;
 
     public void Inst() {
         CLFogOfWarGen();
         LevelManager.instance.SetFOW();
-        // minionGrabber=Instantiate(grabMinions);
+        minionGrabber=gameObject.AddComponent<GetFollowerScript>();
     }
 
     public void Actions() {
         Movement();
+        //***********TIMERS***********\\
+        timeSenseGetFollower+=Time.deltaTime;    
+        //***********TIMERS***********\\
         if(!LevelManager.instance.isSpawning) { //if not in a round
             if(LevelManager.instance.timeBetweenWaves-LevelManager.instance.lastWaveTime<=1.5f) { //about to start round
                 if(!home) {
@@ -38,14 +42,28 @@ public class AttackerRuleSet : NetworkBehaviour
             if(Input.GetMouseButton(0)) {
                 ScreenMouseRay();
             }
-            if(Input.GetKeyDown(KeyCode.Alpha1)) {
-                
-            }
         } 
         
         else { //if in a round
             if(isDead && !changed) {
                 PlayerDead();
+            } 
+            else { //if in a round
+                if(LevelManager.instance.roundTime<=.5f) {
+                    if(!home) {
+                        home=LevelManager.instance.spawners[0].transform;    
+                    }
+                    gameObject.transform.position=home.position;
+                    Respawn();
+                }
+                if(Input.GetKey(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKey(KeyCode.LeftShift)) {
+                    timeSenseGetFollower=0f;
+                    minionGrabber.GrabFollowers();
+                    }
+                if(Input.GetKey(KeyCode.Alpha1) && Input.GetKey(KeyCode.LeftShift)) {
+                    minionGrabber.SetFree();
+                    timeSenseGetFollower+=5f;
+                }
             }
         }
     }
@@ -139,6 +157,9 @@ public class AttackerRuleSet : NetworkBehaviour
 
 
     void OnCollisionStay2D(Collision2D other) {
+        if(!LevelManager.instance) {
+            return;
+        }
         if(!LevelManager.instance.isSpawning) { //if not in round dont do damage
             return;
         }
