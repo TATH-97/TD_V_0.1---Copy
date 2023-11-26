@@ -7,7 +7,7 @@ public class BasicTower : NetworkBehaviour
     [SerializeField] private LayerMask enemyMask;
     [SerializeField] private GameObject beamPrefab;
     [SerializeField] private Transform firingPoint;
-    [SerializeField] private float maxRange = 10f;
+    [SerializeField] private float maxRange = 7f;
     [SerializeField] private float rotationSpeed=400f;
     [SerializeField] private float bps=1; //shots/sec
     
@@ -19,7 +19,7 @@ public class BasicTower : NetworkBehaviour
             FindTarget();
             return;
         }
-        if(target.gameObject.layer!=6) {
+        if(target.gameObject.layer!=6 && target.gameObject.layer!=10) {
             FindTarget();
             return;     
         }
@@ -42,7 +42,9 @@ public class BasicTower : NetworkBehaviour
     } 
 
     public void Shoot() {
-        GameObject bullet= Instantiate(beamPrefab, firingPoint.position, UnityEngine.Quaternion.identity);
+        float angle=Mathf.Atan2((target.position.y - transform.position.y), (target.position.x - transform.position.x)) * Mathf.Rad2Deg - 90f;
+        UnityEngine.Quaternion targetRotation = UnityEngine.Quaternion.Euler(new UnityEngine.Vector3(0f, 0f, angle));
+        GameObject bullet= Instantiate(beamPrefab, firingPoint.position, targetRotation);
         Projectile1 bulletScript = bullet.GetComponent<Projectile1>();
         bulletScript.SetTarget(target); 
         bulletScript.SetHome(transform);
@@ -51,17 +53,17 @@ public class BasicTower : NetworkBehaviour
     private void FindTarget() {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, maxRange, (UnityEngine.Vector2)transform.position, 0f, enemyMask);
         if(hits.Length>0) {
-            CMDUpdateTarget(hits[0].transform.gameObject);
+            CMDUpdateTarget(hits[0].transform);
             // target=hits[0].transform;
         }
     }
 
-    [Command(requiresAuthority =false)] private void CMDUpdateTarget(GameObject _target) {
+    [Command(requiresAuthority =false)] private void CMDUpdateTarget(Transform _target) {
         if(!_target) {
             target=null;
             return;
         }
-        target=_target.transform;
+        target=_target;
     }
 
     private bool ChecktargetIsInRange() {

@@ -40,13 +40,20 @@ public class DefenderRuleset : NetworkBehaviour
     } 
 
     private void DeleteCheck(Collider2D[] col) {
-        Debug.Log("DeleteCheck");
         if(col.Length>0) {
-            Debug.Log(">0");
             foreach(Collider2D c in col) {
                 if(c.gameObject.layer==8 && c.gameObject.tag!="Citadel") {
-                    Debug.Log("PassedCheck");
                     NetworkServer.Destroy(c.gameObject);
+                    if(c.gameObject.tag.Equals("BeamTower")) {
+                        BuildManager.instance.currency+=90;
+                        return;
+                    }
+                    if(c.gameObject.tag.Equals("SpottingTower")) {
+                        BuildManager.instance.currency+=50;
+                        return;
+                    } else {
+                        BuildManager.instance.currency+=5;
+                        }
                 }
             }
         }
@@ -58,7 +65,7 @@ public class DefenderRuleset : NetworkBehaviour
         if(col.Length > 0){//if we clicked on something
             if(!isSpawning) { //if is in round, no need to check vision
                 foreach(Collider2D c in col) {
-                    if(c.gameObject.layer!=0 && c.gameObject.layer!=9 && c.gameObject.layer!=7) {
+                    if((c.gameObject.layer!=0 && c.gameObject.layer!=9 && c.gameObject.layer!=7) || c.gameObject.tag=="Citadel") {
                         canBuild=false;
                         break;
                     }
@@ -69,7 +76,7 @@ public class DefenderRuleset : NetworkBehaviour
                     if(c.gameObject.tag=="Vision") {
                         canBuild=true;
                     }
-                    if(c.gameObject.layer==6 || c.gameObject.layer==8) {
+                    if(c.gameObject.layer==6 || c.gameObject.layer==8 || c.gameObject.layer==10) {
                         canBuild=false;
                         break;
                     }
@@ -101,13 +108,11 @@ public class DefenderRuleset : NetworkBehaviour
     
     [Client] private void Build(Vector3 pos) { 
         if(!isLocalPlayer) return; 
-        Debug.Log("Build");
         BuildGen(pos); 
         CmdBuild(pos);    
     } 
 
     [Command(requiresAuthority =false)] private void CmdBuild(Vector3 pos) {
-        Debug.Log("CmdBuild");
         Tower towerToBuild = BuildManager.instance.GetSelectedTower();
         if(towerToBuild==null) {
             return;
@@ -120,7 +125,6 @@ public class DefenderRuleset : NetworkBehaviour
     }
 
     [ClientRpc] private void RPCSpawnTower(Vector3 pos) {
-        Debug.Log("RPCSpawnTower");
         BuildGen(pos);
     }
     //*******************BUILD*******************\\
@@ -129,6 +133,7 @@ public class DefenderRuleset : NetworkBehaviour
     private void DroneGen() {
         sr.color= new Color(0.57f, 0.5f, 0.5f, 1); 
         gameObject.layer=9;
+        gameObject.transform.position=new Vector3(0,0,0);
     }
 
     [Client] private void SetDrone() {

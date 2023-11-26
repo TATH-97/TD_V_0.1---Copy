@@ -5,7 +5,7 @@ using UnityEngine;
 public class AbilityManager : MonoBehaviour
 {   
     public static AbilityManager instance;
-    [SerializeField] public GameObject[] attackerAbilities;
+    [SerializeField] public Ability[] attackerAbilities;
     private int idex;
     private void Awake() {
         if(instance==null) {
@@ -14,10 +14,10 @@ public class AbilityManager : MonoBehaviour
     }
 
     private void SetIndex(int _idex) {
-        idex=_idex;
+        idex=_idex+1;
     }
 
-    private GameObject GetAbility() {
+    private Ability GetAbility() {  
         return attackerAbilities[idex];
     } 
 }

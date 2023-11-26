@@ -1,9 +1,10 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
+using UnityEditor;
 
 public class AttackerRuleSet : NetworkBehaviour
 {
-    public bool[] abilitiesActive; //used for switching abilities on and off
     [SerializeField] int damage=20; //may not need, maybe apply to weapon
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private GameObject spottingSystemPrefab;
@@ -15,14 +16,18 @@ public class AttackerRuleSet : NetworkBehaviour
     public float moveSpeed= 0.1f;
     public Transform home; //default
     private SpriteMask mask; 
-    // private GameObject minionGrabber;
     public float timeSenseGetFollower=15f;
     private GetFollowerScript minionGrabber;
+    private SpikeManager spikeManager;
+    [SerializeField] GameObject spikeManagerAbility;
 
     public void Inst() {
         CLFogOfWarGen();
         LevelManager.instance.SetFOW();
         minionGrabber=gameObject.AddComponent<GetFollowerScript>();
+        spikeManager=spikeManagerAbility.GetComponent<SpikeManager>();
+        spikeManager.Inst();
+        sr.color=new Color(1f, 0.0f, 0.0f, 1);//only local player red.
     }
 
     public void Actions() {
@@ -38,9 +43,8 @@ public class AttackerRuleSet : NetworkBehaviour
                 gameObject.transform.position=home.position;
                 Respawn();
             }
-
             if(Input.GetMouseButton(0)) {
-                ScreenMouseRay();
+                HomeCheck(ScreenMouseRay());
             }
         } 
         
@@ -51,19 +55,33 @@ public class AttackerRuleSet : NetworkBehaviour
             else { //if in a round
                 if(LevelManager.instance.roundTime<=.5f) {
                     if(!home) {
-                        home=LevelManager.instance.spawners[0].transform;    
+                        home=LevelManager.instance.spawners[0].transform;
+                        minionGrabber.SetFree();    
                     }
                     gameObject.transform.position=home.position;
                     Respawn();
                 }
-                if(Input.GetKey(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKey(KeyCode.LeftShift)) {
+                if(Input.GetKey(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKey(KeyCode.LeftShift) && minionGrabber.minionCount<minionGrabber.minionLimit) {
                     timeSenseGetFollower=0f;
                     minionGrabber.GrabFollowers();
                     }
                 if(Input.GetKey(KeyCode.Alpha1) && Input.GetKey(KeyCode.LeftShift)) {
                     minionGrabber.SetFree();
-                    timeSenseGetFollower+=5f;
                 }
+                // if(Input.GetKey(KeyCode.Alpha2)) { //spike
+                //     bool canBuild=true;
+                //     Collider2D[] col=ScreenMouseRay();
+                //     if(col.Length > 0) {
+                //         foreach(Collider2D c in col) {
+                //             if(c.gameObject.layer==4 || c.gameObject.layer==8) {
+                //                 canBuild=false;
+                //             }
+                //         }
+                //         if(canBuild) {
+                //             spikeManager.AddSpike(gameObject.transform);
+                //         }
+                //     }
+                // }
             }
         }
     }
@@ -96,13 +114,12 @@ public class AttackerRuleSet : NetworkBehaviour
 
     //******************FogOfWar******************\\
     private void FogOfWarGen() {
-        // GameObject temp=GameObject.FindWithTag("Vision");
-        // mask=temp.GetComponent<SpriteMask>();
         mask=gameObject.GetComponentInChildren<SpriteMask>();
         mask.frontSortingOrder=0;
         GameObject maskA=Instantiate(spottingSystemPrefab);
         maskA.transform.parent=gameObject.transform;
         maskA.transform.position=gameObject.transform.position;
+        gameObject.transform.position=new Vector3(Random.Range(-5, 5), 10, 0);
     }
 
     [Client] private void CLFogOfWarGen() {
@@ -131,15 +148,22 @@ public class AttackerRuleSet : NetworkBehaviour
         isDead=false;
         changed=false;
         gameObject.layer=6;
-        col=new Color(1f, 0.0f, 0.0f, 1);
+        col=new Color(0, 0.0f, 0.0f, 1);
         sr.color= col;
         ItemHealth h =GetComponentInParent<ItemHealth>();
         h.ResetHealth();
+        h.ResetKilled();
+        // minionGrabber.SetFree();
+        // minionGrabber.LevelUp();
     }
     [Client] private void Respawn() { //called by local player to respawn.
         if(!isLocalPlayer) return;
         RespawnGen();
         CMDPlayerRespawn();
+        sr.color=new Color(1,0,0,1);
+        if(spikeManager) {
+            spikeManager.CheckSpikes();            
+        }
     }
 
     [Command] private void CMDPlayerRespawn() { //updates attacker sprite on server
@@ -164,6 +188,9 @@ public class AttackerRuleSet : NetworkBehaviour
             return;
         }
         GameObject go=other.gameObject;
+        if(go.tag=="Citadel") {
+            return;
+        }
         if(go.layer==8 && LevelManager.instance.isSpawning) {
             ItemHealth H=go.GetComponent<ItemHealth>();
             if(timeSenseLastAttack>=timeToAttack) {
@@ -175,11 +202,14 @@ public class AttackerRuleSet : NetworkBehaviour
         }
     }
 
-    public void ScreenMouseRay() { //May want to return the transform to make more generic
+    private Collider2D[] ScreenMouseRay() {
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = 5f;
         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        Collider2D[] col = Physics2D.OverlapPointAll(worldPosition);
+        return Physics2D.OverlapPointAll(worldPosition);
+    }
+
+    private void HomeCheck(Collider2D[] col) {
         if(col.Length > 0){
             foreach(Collider2D c in col) {
                 if(c.gameObject.tag=="Respawn") {

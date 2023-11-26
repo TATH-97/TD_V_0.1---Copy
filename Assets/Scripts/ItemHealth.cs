@@ -5,7 +5,7 @@ public class ItemHealth : NetworkBehaviour
 {
     [SerializeField] public int startingHealth;
     [SyncVar] public int health;
-    private bool killed=false; //stop multiple calls
+    public bool killed=false; //stop multiple calls
 
     private void Awake() {
         health=startingHealth;
@@ -28,9 +28,6 @@ public class ItemHealth : NetworkBehaviour
                 AttackerRuleSet ASS=GetComponentInParent<AttackerRuleSet>();
                 ASS.isDead=true;
                 return;
-            }
-            if(GameObject.FindWithTag("Citadel")) {
-                Debug.Log("EndGame");
             } else {
                 if(isServer) {
                     NetworkServer.Destroy(gameObject);
@@ -52,4 +49,8 @@ public class ItemHealth : NetworkBehaviour
     public void ResetHealth() {
         health=startingHealth;
     }
+
+    public void ResetKilled() {
+        killed=false;
+    }   
 }

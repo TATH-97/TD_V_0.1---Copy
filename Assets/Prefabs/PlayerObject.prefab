@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: -5873993873275397446}
   - component: {fileID: 1830179883218960541}
   - component: {fileID: -3624100325193169020}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: PlayerObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 300
-  m_LinearDrag: 10
+  m_LinearDrag: 100
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -228,14 +228,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  abilitiesActive: 
   damage: 20
   sr: {fileID: 3565757628485653194}
   spottingSystemPrefab: {fileID: 6515655354903901905, guid: afb31eddcf980954dbda3a7e9e01af6f, type: 3}
-  grabMinions: {fileID: 165553267886221990, guid: caf9ba5f7be03334da9cd13868a671f6, type: 3}
   isDead: 0
   moveSpeed: 0.1
   home: {fileID: 0}
+  timeSenseGetFollower: 15
+  spikeManagerAbility: {fileID: 8848988977363911047, guid: 793e8d198d6fd024a9d1bcea8de93ad1, type: 3}
 --- !u!114 &-3624100325193169020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,9 +325,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1596079817
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -4,10 +4,10 @@ using UnityEngine.AI;
 
 public class GetFollowerScript : MonoBehaviour
 {
-    [SerializeField] private int minionLimit=3; 
+    [SerializeField] public int minionLimit=3; 
     public int minionCount=0;
     private int level=1;
-    private int levelLimit=2;
+    private int levelLimit=3;
     private float radius=6;
     public List<BasicMinionMovement> followers = new();
     public float coolDownTime=15;
@@ -33,6 +33,7 @@ public class GetFollowerScript : MonoBehaviour
     }
 
     private void AddMinion(GameObject newMinion) {
+        if(minionCount>=minionLimit) return;
         minionCount++;
         followers.Add(newMinion.GetComponent<BasicMinionMovement>());
         newMinion.GetComponent<BasicMinionMovement>().CMDJoinParty(gameObject.transform);
@@ -40,9 +41,21 @@ public class GetFollowerScript : MonoBehaviour
 
     public void SetFree() {
         foreach(BasicMinionMovement minion in followers) {
-            minionCount--;
             if(!minion) continue; //case where follower died
             minion.CMDSetFree();
+            minionCount=0;
+        }
+    }
+
+    public void LevelUp() {
+        if(level>=levelLimit) { //remove when fully patched
+            return;
+        }
+        level++;
+        radius+=level*2;
+        minionLimit*=2;
+        if(level==levelLimit) {
+            coolDownTime=8f;
         }
     }
 

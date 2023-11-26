@@ -7,7 +7,7 @@ public class BasicMinionMovement : NetworkBehaviour
     [SerializeField] public GameObject targetGameobject;
     [SerializeField] public Transform target; 
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] int damage;
+    [SerializeField] public int damage;
     [SerializeField] private float timeToAttack=1.5f;
     [SerializeField] private float timeSenseLastAttack=1.5f;
     NavMeshAgent agent;
@@ -53,14 +53,14 @@ public class BasicMinionMovement : NetworkBehaviour
 
     [Command(requiresAuthority =false)] public void CMDJoinParty(Transform newTarget) {
         setTarget(newTarget);
-        CMDChangeLayer(10);
+        // CMDChangeLayer(10);
         gameObject.GetComponent<NavMeshAgent>().speed=8;
     }
 
     [Command(requiresAuthority =false)] public void CMDSetFree() {
         gameObject.GetComponent<NavMeshAgent>().speed=2;
         setTarget(targetGameobject.transform);
-        CMDChangeLayer(6);
+        // CMDChangeLayer(6);
     }
 
     [Command(requiresAuthority =false)] public void CMDChangeLayer(int layer) {

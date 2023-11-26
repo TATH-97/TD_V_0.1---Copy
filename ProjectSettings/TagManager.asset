@@ -10,6 +10,8 @@ TagManager:
   - Vision
   - FogOfWarTag
   - AttackerVision
+  - BeamTower
+  - SpottingTower
   layers:
   - Default
   - TransparentFX

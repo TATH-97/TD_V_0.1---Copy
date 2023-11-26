@@ -8,7 +8,6 @@ public class Projectile1 : MonoBehaviour
     [SerializeField] private int dist;
     private Transform target;
     private Vector3 home;
-    private GameObject parent;
 
     public void SetTarget(Transform _target) {
         rb.mass=0;
@@ -39,7 +38,8 @@ public class Projectile1 : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.GetComponent<ItemHealth>()!=null && other.gameObject.layer==6) {
+        if((other.gameObject.GetComponent<ItemHealth>()!=null && other.gameObject.layer==6) ||
+        other.gameObject.GetComponent<ItemHealth>()!=null && other.gameObject.layer==10) {
             other.gameObject.GetComponent<ItemHealth>().TakeDamage(damageVal);
             Destroy(gameObject); 
         } else {

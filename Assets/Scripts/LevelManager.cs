@@ -15,6 +15,7 @@ public class LevelManager : NetworkBehaviour
         [SerializeField] private GameObject[] spawnees; // array of spawnable minions
         [SerializeField] public GridLayout gameBoard; //The hexboard
         [SerializeField] public GameObject spire; //minion destenation
+        [SerializeField] public GameObject abilityManager;
         public GameObject fogOfWarInstance; 
    //************GAMEOBJECTS************\\
 
@@ -22,7 +23,7 @@ public class LevelManager : NetworkBehaviour
     //************ROUND INFO ************\\
         [SerializeField] private int baseCount=12;
         [SerializeField] private float scalingFactor=.75f;
-        private int waveCount=0; 
+        public int waveCount=0; 
         [SyncVar] public bool isSpawning=false;
         private int minionsToKill=0;
         private int minionsKilled=0;
@@ -78,9 +79,13 @@ public class LevelManager : NetworkBehaviour
         fogOfWarInstance.SetActive(false);
     }
 
-    private void Update() { 
-        if(isSpawning) {
-            TimeConversion(totalRoundTime-roundTime);
+    private void FixedUpdate() { 
+        if(isSpawning) { // if in round
+            float time=totalRoundTime-roundTime;
+            if(time<0) {
+                time=0f;
+            }
+            TimeConversion(time);
             roundTime+=Time.deltaTime;
             lastSpawnTime+=Time.deltaTime;  
             if(lastSpawnTime>=1f/minionsPerSecond &&minionsPerSource>0) {
@@ -89,15 +94,19 @@ public class LevelManager : NetworkBehaviour
                 }
                 minionsPerSource--;
             }
-            if(minionsToKill-minionsKilled<=0 || roundTime>=totalRoundTime) {
+            if((minionsToKill-minionsKilled<=0 && isServer) || (roundTime>=totalRoundTime && isServer)) {
                 EndWaveCL();
             }
         }
 
-        if (!isSpawning) {
+        if (!isSpawning) { // if not in round
             lastWaveTime+=Time.deltaTime;
-            TimeConversion(timeBetweenWaves-lastWaveTime);
-            if(lastWaveTime>=timeBetweenWaves && minionsToKill-minionsKilled<=0) {
+            float time = timeBetweenWaves-lastWaveTime;
+            if(time<0) {
+                time=0;
+            } 
+            TimeConversion(time);
+            if(lastWaveTime>=timeBetweenWaves && minionsToKill-minionsKilled<=0 && isServer) {
                 StartWaveCL();
             }
         }
@@ -115,6 +124,7 @@ public class LevelManager : NetworkBehaviour
 
 //***************START WAVE NETCODE***************\\
     public void StartWave() {
+        BuildManager.instance.currency+=50*NetworkManager.singleton.numPlayers;
         minionsSpawned = new List<Transform>();
         startWaveButton.interactable=false;
         roundTime+=Time.deltaTime;
@@ -229,11 +239,13 @@ public class LevelManager : NetworkBehaviour
         if(!isServer) {//minions only on server
             return;
         }
+        pos=new Vector3(UnityEngine.Random.Range(-2, 2)+pos.x, UnityEngine.Random.Range(-2, 2)+pos.y, 0);
         GameObject newBorn=Instantiate(spawnees[idex]);
         BasicMinionMovement move =newBorn.GetComponent<BasicMinionMovement>();
         minionsSpawned.Add(newBorn.transform);
         move.setTarget(spire.transform);
         move.targetGameobject=spire;
+        move.damage+=waveCount;
         newBorn.transform.SetPositionAndRotation(pos, rot);
         NetworkServer.Spawn(newBorn);
     }
