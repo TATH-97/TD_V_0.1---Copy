@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4930207219770861630}
   - component: {fileID: 4930207219770861616}
   - component: {fileID: 6062479714192027502}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: AOE_Exposion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
