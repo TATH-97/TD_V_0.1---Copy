@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "TD_V_0.1 - workingBranch.sln"
+    "dotnet.defaultSolution": "TD_V_0.1---Copy.sln"
 }
