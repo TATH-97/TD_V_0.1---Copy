@@ -2,6 +2,8 @@ using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 using UnityEditor;
+using Unity.VisualScripting;
+using UnityEngine.Timeline;
 
 public class AttackerRuleSet : NetworkBehaviour
 {
@@ -61,6 +63,7 @@ public class AttackerRuleSet : NetworkBehaviour
                     gameObject.transform.position=home.position;
                     Respawn();
                 }
+                //***********ABILITIES***********\\
                 if(Input.GetKey(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKey(KeyCode.LeftShift) && minionGrabber.minionCount<minionGrabber.minionLimit) {
                     timeSenseGetFollower=0f;
                     minionGrabber.GrabFollowers();
@@ -68,6 +71,13 @@ public class AttackerRuleSet : NetworkBehaviour
                 if(Input.GetKey(KeyCode.Alpha1) && Input.GetKey(KeyCode.LeftShift)) {
                     minionGrabber.SetFree();
                 }
+                if(Input.GetMouseButton(0)&&Input.GetKey(KeyCode.Alpha1)){
+                    Vector3 mousePosition = Input.mousePosition;
+                    mousePosition.z = 5f;
+                    GameObject marker = new GameObject();
+                    marker.transform.position=Camera.main.ScreenToWorldPoint(mousePosition);
+                    minionGrabber.CastMinions(marker);
+                } 
                 // if(Input.GetKey(KeyCode.Alpha2)) { //spike
                 //     bool canBuild=true;
                 //     Collider2D[] col=ScreenMouseRay();
@@ -82,6 +92,7 @@ public class AttackerRuleSet : NetworkBehaviour
                 //         }
                 //     }
                 // }
+                //***********ABILITIES***********\\
             }
         }
     }

@@ -47,6 +47,14 @@ public class GetFollowerScript : MonoBehaviour
         }
     }
 
+    public void CastMinions(GameObject marker) {
+        foreach(BasicMinionMovement minion in followers) {
+            if(!minion) continue; //case where follower died
+            minion.CMDCast(marker);
+            minionCount=0;
+        }
+    }
+
     public void LevelUp() {
         if(level>=levelLimit) { //remove when fully patched
             return;

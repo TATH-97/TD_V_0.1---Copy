@@ -7,7 +7,7 @@ public class Tower
     public int cost;
     public GameObject prefab;
     public string name; 
-    public SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer; 
 
     public Tower(string _name, int _cost, GameObject _prefab) {
         name=_name;

@@ -5,17 +5,20 @@ public class BasicTower : NetworkBehaviour
 {
     [SerializeField] private Transform turretRotationPoint;
     [SerializeField] private LayerMask enemyMask;
-    [SerializeField] private GameObject beamPrefab;
     [SerializeField] private Transform firingPoint;
     [SerializeField] private float maxRange = 7f;
     [SerializeField] private float rotationSpeed=400f;
     [SerializeField] private float bps=1; //shots/sec
+    [SerializeField] int damageVal=1; 
     
     [SyncVar] private Transform target; //need to add hook
     private float timeUntillFire;
+    // private GameObject myBeam;
+    [SerializeField] private LineRenderer lr;
 
     private void Update() {
         if(target==null) {
+            lr.SetPosition(0, new Vector3(0,0,0));
             FindTarget();
             return;
         }
@@ -34,27 +37,26 @@ public class BasicTower : NetworkBehaviour
                 return;
             }
             timeUntillFire+=Time.deltaTime;
-            if(timeUntillFire>=1f/bps) {
-                Shoot();
-                timeUntillFire=0f;
-            }
+            Shoot();
         }
     } 
 
     public void Shoot() {
         float angle=Mathf.Atan2((target.position.y - transform.position.y), (target.position.x - transform.position.x)) * Mathf.Rad2Deg - 90f;
-        UnityEngine.Quaternion targetRotation = UnityEngine.Quaternion.Euler(new UnityEngine.Vector3(0f, 0f, angle));
-        GameObject bullet= Instantiate(beamPrefab, firingPoint.position, targetRotation);
-        Projectile1 bulletScript = bullet.GetComponent<Projectile1>();
-        bulletScript.SetTarget(target); 
-        bulletScript.SetHome(transform);
+        Vector3 pos=new Vector3(0, Vector2.Distance(firingPoint.position, target.position), 0);
+        lr.SetPosition(0, pos);
+        if(timeUntillFire>=1f/bps) {
+            if(target.gameObject.layer==6 || target.gameObject.layer==10) {
+                target.gameObject.GetComponent<ItemHealth>().TakeDamage(damageVal);
+            }
+            timeUntillFire=0f;
+        }
     }
 
     private void FindTarget() {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, maxRange, (UnityEngine.Vector2)transform.position, 0f, enemyMask);
         if(hits.Length>0) {
             CMDUpdateTarget(hits[0].transform);
-            // target=hits[0].transform;
         }
     }
 

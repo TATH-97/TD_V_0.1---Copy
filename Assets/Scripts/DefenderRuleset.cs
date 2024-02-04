@@ -43,17 +43,29 @@ public class DefenderRuleset : NetworkBehaviour
         if(col.Length>0) {
             foreach(Collider2D c in col) {
                 if(c.gameObject.layer==8 && c.gameObject.tag!="Citadel") {
-                    NetworkServer.Destroy(c.gameObject);
                     if(c.gameObject.tag.Equals("BeamTower")) {
-                        BuildManager.instance.currency+=90;
+                        if(!LevelManager.instance.isSpawning) {
+                            BuildManager.instance.currency+=150;
+                        } else {
+                            BuildManager.instance.currency+=90;
+                        }
+                        NetworkServer.Destroy(c.gameObject);
                         return;
                     }
                     if(c.gameObject.tag.Equals("SpottingTower")) {
-                        BuildManager.instance.currency+=50;
+                        if(!LevelManager.instance.isSpawning) {
+                            BuildManager.instance.currency+=80;
+                        } else {
+                            BuildManager.instance.currency+=50;
+                        }
+                        NetworkServer.Destroy(c.gameObject);
                         return;
                     } else {
-                        BuildManager.instance.currency+=5;
-                        }
+                        if(!LevelManager.instance.isSpawning) {
+                            BuildManager.instance.currency+=5;
+                        } 
+                        NetworkServer.Destroy(c.gameObject);
+                    }
                 }
             }
         }

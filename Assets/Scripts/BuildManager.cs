@@ -1,16 +1,35 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 
 public class BuildManager : NetworkBehaviour
 {
     public static BuildManager instance;
     public bool armed=false;
     public bool wallArmed=false;
+    public List<Tower> towersPlaced;
 
     // [SerializeField] private GameObject[] buildingPrefabs;
     [SerializeField] private Tower[] buildingPrefabs;
     public int currency;
     private int selectedTower=0;
+    
+
+    private void Awake() {
+        if(instance==null) {
+            instance=this;
+        }    
+        Inst();    
+    }
+
+    private void Inst() {
+        GameObject[] objs=LevelManager.instance.GetPrefabs();
+        foreach(GameObject gm in objs) {
+            NetworkClient.RegisterPrefab(gm); //may need some kinda ID
+        }
+        towersPlaced=new List<Tower>();
+    }
+
     public Tower GetSelectedTower() {
         if(selectedTower==0 && wallArmed) {
             if(buildingPrefabs[selectedTower].cost>currency) {
@@ -36,13 +55,6 @@ public class BuildManager : NetworkBehaviour
     public Tower[] GetPrefabs() {
         return buildingPrefabs;
     }
-    
-    private void Awake() {
-        if(instance==null) {
-            instance=this;
-        }    
-        Inst();    
-    }
 
     public void ArmClicker() {
         armed=!armed;
@@ -67,14 +79,6 @@ public class BuildManager : NetworkBehaviour
     public void SetSelectedTower(int idx) {
         Debug.Log("Selected Tower");
         selectedTower=idx;
-    }
-
-        
-        private void Inst() {
-        GameObject[] objs=LevelManager.instance.GetPrefabs();
-        foreach(GameObject gm in objs) {
-            NetworkClient.RegisterPrefab(gm); //may need some kinda ID
-        }
     }
 
 }
