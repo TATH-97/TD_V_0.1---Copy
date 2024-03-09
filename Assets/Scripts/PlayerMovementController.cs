@@ -28,7 +28,7 @@ public class PlayerMovementController : NetworkBehaviour
         parent=this.GetComponentInParent<PlayerObjectController>();
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         if(SceneManager.GetActiveScene().name=="GameBoard1") { //find more effecient way to detect scene
             if(isOwned) {
                 //**********Setup**********

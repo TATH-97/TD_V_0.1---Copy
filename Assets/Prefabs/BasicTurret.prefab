@@ -207,7 +207,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1088
   firingPoint: {fileID: 6743348903625595889}
-  maxRange: 20
+  maxRange: 14
   rotationSpeed: 400
   bps: 16
   damageVal: 1

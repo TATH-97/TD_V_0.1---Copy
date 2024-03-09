@@ -212,6 +212,7 @@ MonoBehaviour:
   FOV: 0
   sr: {fileID: 3565757628485653194}
   spottingSystem: {fileID: 1010130549700910060, guid: 2c0765cdf42d5bc44915b828beb20807, type: 3}
+  Widget: {fileID: 5930981303954295104, guid: 805699cd3a69f5144a2f9e89e16d3cd2, type: 3}
   moveSpeed: 0.075
 --- !u!114 &1830179883218960541
 MonoBehaviour:
@@ -229,6 +230,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   damage: 20
+  startingDamage: 20
   sr: {fileID: 3565757628485653194}
   spottingSystemPrefab: {fileID: 6515655354903901905, guid: afb31eddcf980954dbda3a7e9e01af6f, type: 3}
   isDead: 0
@@ -253,6 +255,7 @@ MonoBehaviour:
   syncInterval: 0
   startingHealth: 100
   health: 0
+  killed: 0
 --- !u!1 &2735894522991360925
 GameObject:
   m_ObjectHideFlags: 0

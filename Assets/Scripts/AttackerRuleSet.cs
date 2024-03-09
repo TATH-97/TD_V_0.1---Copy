@@ -1,13 +1,10 @@
 using UnityEngine;
 using Mirror;
-using System.Collections.Generic;
-using UnityEditor;
-using Unity.VisualScripting;
-using UnityEngine.Timeline;
 
 public class AttackerRuleSet : NetworkBehaviour
 {
     [SerializeField] int damage=20; //may not need, maybe apply to weapon
+    public int startingDamage=20; 
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private GameObject spottingSystemPrefab;
     [SyncVar] private Color col=new Color(1,0,0,1);
@@ -32,8 +29,11 @@ public class AttackerRuleSet : NetworkBehaviour
         sr.color=new Color(1f, 0.0f, 0.0f, 1);//only local player red.
     }
 
-    public void Actions() {
+    private void FixedUpdate() {
         Movement();
+    }
+
+    public void Actions() {
         //***********TIMERS***********\\
         timeSenseGetFollower+=Time.deltaTime;    
         //***********TIMERS***********\\
@@ -64,34 +64,35 @@ public class AttackerRuleSet : NetworkBehaviour
                     Respawn();
                 }
                 //***********ABILITIES***********\\
-                if(Input.GetKey(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKey(KeyCode.LeftShift) && minionGrabber.minionCount<minionGrabber.minionLimit) {
+                if(Input.GetKeyDown(KeyCode.Alpha1) && timeSenseGetFollower>=minionGrabber.coolDownTime && !Input.GetKeyDown(KeyCode.LeftShift) && minionGrabber.minionCount<minionGrabber.minionLimit) {
                     timeSenseGetFollower=0f;
                     minionGrabber.GrabFollowers();
                     }
-                if(Input.GetKey(KeyCode.Alpha1) && Input.GetKey(KeyCode.LeftShift)) {
+                if(Input.GetKeyDown(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.LeftShift)) {
                     minionGrabber.SetFree();
                 }
-                if(Input.GetMouseButton(0)&&Input.GetKey(KeyCode.Alpha1)){
+                if(Input.GetMouseButton(0)&&Input.GetKeyDown(KeyCode.Alpha1)){
                     Vector3 mousePosition = Input.mousePosition;
                     mousePosition.z = 5f;
                     GameObject marker = new GameObject();
                     marker.transform.position=Camera.main.ScreenToWorldPoint(mousePosition);
                     minionGrabber.CastMinions(marker);
                 } 
-                // if(Input.GetKey(KeyCode.Alpha2)) { //spike
-                //     bool canBuild=true;
-                //     Collider2D[] col=ScreenMouseRay();
-                //     if(col.Length > 0) {
-                //         foreach(Collider2D c in col) {
-                //             if(c.gameObject.layer==4 || c.gameObject.layer==8) {
-                //                 canBuild=false;
-                //             }
-                //         }
-                //         if(canBuild) {
-                //             spikeManager.AddSpike(gameObject.transform);
-                //         }
-                //     }
-                // }
+                if(Input.GetKeyDown("2")) { //spike
+                    Debug.Log("KEY DOWN");
+                    bool canBuild=true;
+                    Collider2D[] col=ScreenMouseRay();
+                    if(col.Length > 0) {
+                        foreach(Collider2D c in col) {
+                            if(c.gameObject.layer==4 || c.gameObject.layer==8) {
+                                canBuild=false;
+                            }
+                        }
+                        if(canBuild) {
+                            spikeManager.AddSpike(gameObject.transform);
+                        }
+                    }
+                }
                 //***********ABILITIES***********\\
             }
         }
@@ -162,8 +163,10 @@ public class AttackerRuleSet : NetworkBehaviour
         col=new Color(0, 0.0f, 0.0f, 1);
         sr.color= col;
         ItemHealth h =GetComponentInParent<ItemHealth>();
+        damage=startingDamage+5*LevelManager.instance.waveCount;
         h.ResetHealth();
         h.ResetKilled();
+        h.health=h.startingHealth+10*LevelManager.instance.waveCount;
         // minionGrabber.SetFree();
         // minionGrabber.LevelUp();
     }

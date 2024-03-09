@@ -7,6 +7,7 @@ public class DefenderRuleset : NetworkBehaviour
     [SerializeField] private float FOV; 
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] public GameObject spottingSystem;
+    [SerializeField] public GameObject Widget;
     public float moveSpeed= 0.075f;
 
     public void Inst() {
@@ -17,14 +18,40 @@ public class DefenderRuleset : NetworkBehaviour
         LevelManager.instance.SetFOW();  
     }
 
-    public void Actions() {
+    private void FixedUpdate() {
         Movement();
+    }
+
+    public void Actions() {
+        // Movement();
         if(Input.GetMouseButton(0) && !Input.GetKey(KeyCode.LeftShift)) {
             BuildCheck(ScreenMouseRay(), ConvertToWorldPos(Input.mousePosition));
         }
         if(Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftShift)) {
             DeleteCheck(ScreenMouseRay());
         }
+        if(Input.GetKeyDown(KeyCode.Space)) {
+            Debug.Log("SPACE");
+            CMDtest();
+        }
+    }
+
+    //TEST CODE
+    [Command] private void CMDtest() {
+        GameObject test=Instantiate(Widget);
+        test.transform.position=gameObject.transform.position;
+        NetworkServer.Spawn(test);
+        Debug.Log("CMDtest");
+        RPCtest();
+    }
+
+    [ClientRpc] private void RPCtest() {
+        if(isServer) {
+            return;
+        }
+        Debug.Log("RPCTest");
+        GameObject test=Instantiate(Widget);
+        test.transform.position=gameObject.transform.position;
     }
 
     private Collider2D[] ScreenMouseRay() {
@@ -138,7 +165,7 @@ public class DefenderRuleset : NetworkBehaviour
 
     [ClientRpc] private void RPCSpawnTower(Vector3 pos) {
         BuildGen(pos);
-    }
+    } 
     //*******************BUILD*******************\\
 
     //*******************DRONE*********************\\

@@ -26,6 +26,7 @@ public class BasicMinionMovement : NetworkBehaviour
 		agent.updateUpAxis = false;
         dest = agent.destination;
         setTarget(targetGameobject.transform);
+        damage=LevelManager.instance.waveCount*2;
 	}
 
     // Update is called once per frame

@@ -130,7 +130,7 @@ NavMeshAgent:
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
-  m_AutoRepath: 1
+  m_AutoRepath: 0
   m_Height: 1
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
@@ -263,3 +263,4 @@ MonoBehaviour:
   syncInterval: 0
   startingHealth: 50
   health: 0
+  killed: 0

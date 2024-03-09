@@ -16333,7 +16333,7 @@ MonoBehaviour:
   roundTime: 0
   GenSetUpTime: 30
   totalRoundTime: 90
-  timeBetweenWaves: 90
+  timeBetweenWaves: 15
   lastWaveTime: 0
   minionsSpawned: []
   startWaveButton: {fileID: 1479950561}
@@ -17349,7 +17349,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 26.68692
+  orthographic size: 27.05268
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -18030,7 +18030,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: -67.50008}
+  m_AnchoredPosition: {x: -0.000030517578, y: -67.50009}
   m_SizeDelta: {x: 0, y: -135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1624557306
@@ -18297,6 +18297,7 @@ MonoBehaviour:
   syncInterval: 0
   armed: 0
   wallArmed: 0
+  towersPlaced: []
   buildingPrefabs:
   - cost: 5
     prefab: {fileID: 6631982870883619018, guid: 8553950c485717344803b5623c76f3d6, type: 3}
@@ -18312,6 +18313,10 @@ MonoBehaviour:
     spriteRenderer: {fileID: 0}
   - cost: 150
     prefab: {fileID: 4094618489183865140, guid: e73b29bc70b20d74fa1629956d4e320c, type: 3}
+    name: Mortar Turret
+    spriteRenderer: {fileID: 0}
+  - cost: 150
+    prefab: {fileID: 5930981303954295104, guid: 805699cd3a69f5144a2f9e89e16d3cd2, type: 3}
     name: Mortar Turret
     spriteRenderer: {fileID: 0}
   currency: 1000

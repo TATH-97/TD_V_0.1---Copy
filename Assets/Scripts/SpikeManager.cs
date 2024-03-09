@@ -14,6 +14,16 @@ public class SpikeManager : NetworkBehaviour
     }
 
 //******************SPIKE_SPAWN******************\\
+    public void AddSpike(Transform pos) {
+        // if(isClientOnly) {
+        //     AddSpikeCL(pos);
+        // } else {
+        //     SpikeGen(pos);
+        //     CmdPlaceSpike(pos);
+        // }
+        AddSpikeCL(pos);
+    }
+
     private void SpikeGen(Transform pos) {
         if(GetCount()>=level) {
             Debug.Log("Reached Max Num of spikes");
@@ -27,38 +37,33 @@ public class SpikeManager : NetworkBehaviour
         spike.roundSet=LevelManager.instance.waveCount;
         spike.roundsWillLast=level;
     }
-    public void AddSpike(Transform pos) {
-        // if(isClientOnly) {
-        //     AddSpikeCL(pos);
-        // } else {
-        //     SpikeGen(pos);
-        //     CmdPlaceSpike(pos);
-        // }
-        AddSpikeCL(pos);
-    }
 
     [Client] private void AddSpikeCL(Transform pos) {
+        if(!isLocalPlayer) return;
         Debug.Log("SPIKECL");
         SpikeGen(pos);
         CmdPlaceSpike(pos);
     }   
 
     [Command(requiresAuthority =false)] private void CmdPlaceSpike(Transform pos) {
-        if(GetCount()>=level) {
-            Debug.Log("Reached Max Num of spikes");
-            return;
-        }
-        Debug.Log("CMD BUILDING");
-        GameObject temp=Instantiate(spikePrefab);
-        temp.transform.position=pos.position;
-        Spike spike=temp.GetComponent<Spike>();
-        spikeList.Add(spike);
-        spike.roundSet=LevelManager.instance.waveCount;
-        spike.roundsWillLast=level;
-        NetworkServer.Spawn(temp);
+        // if(GetCount()>=level) {
+        //     Debug.Log("Reached Max Num of spikes");
+        //     return;
+        // }
+        // Debug.Log("CMD BUILDING");
+        // GameObject temp=Instantiate(spikePrefab);
+        // temp.transform.position=pos.position;
+        // Spike spike=temp.GetComponent<Spike>();
+        // spikeList.Add(spike);
+        // spike.roundSet=LevelManager.instance.waveCount;
+        // spike.roundsWillLast=level;
+        // NetworkServer.Spawn(temp);
+        SpikeGen(pos);
+        RPCSpike(pos);
     }
 
     [ClientRpc] private void RPCSpike(Transform pos) {
+        if(isLocalPlayer) return;
         SpikeGen(pos);
     }
     //******************SPIKE_SPAWN******************\\
